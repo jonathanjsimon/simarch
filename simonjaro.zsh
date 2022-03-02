@@ -52,6 +52,8 @@ then
     /usr/bin/sudo perl -p -i -e 's/^.MAKEFLAGS=.*/MAKEFLAGS="-j8"/g' /etc/makepkg.conf
     # remove some things
     pamac remove kate
+    sudo pacman -Rdd pulseaudio pulseaudio-alsa pulseaudio-bluetooth pulseaudio-ctl pulseaudio-zeroconf
+    sudo pacman -S manjaro-pipewire gst-plugin-pipewire plasma-pa pipewire-jack easyeffects pipewire-x11-bell realtime-privileges xdg-desktop-portal-kde
 
     # install a bunch
     pamac install --no-confirm yay opendoas emacs-nox visual-studio-code-bin \
@@ -65,7 +67,8 @@ then
                                 rustup gdb lldb kgpg kwrite plasma5-applets-virtual-desktop-bar-git \
                                 discover baobab dotnet-host dotnet-runtime dotnet-runtime-3.1 dotnet-sdk \
                                 dotnet-sdk-3.1 dotnet-targeting-pack dotnet-targeting-pack-3.1 aspnet-runtime \
-                                aspnet-runtime-3.1 aspnet-targeting-pack aspnet-targeting-pack-3.1
+                                aspnet-runtime-3.1 aspnet-targeting-pack aspnet-targeting-pack-3.1 \
+                                obsidian npm
 
     # installing this separately because it seems to no longer well and I wanted to be able to comment it out
     pamac install --no-confirm superpaper
@@ -73,6 +76,9 @@ then
     # get that rust
     rustup toolchain install stable
     rustup target add i686-unknown-linux-gnu
+
+    # install some npm stuff
+    sudo npm i -g html-minifier uglify-js uglifycss sass
 
     # install some AUR things that take a while to compile
     # mono-git build-depends on mono which is installed in the prior steps
@@ -84,6 +90,6 @@ fi
 
 LAST_SNAPSHOT=`borg list --short --last 1 "${REPO_PATH}"`
 echo "${LAST_SNAPSHOT}"
-# borg --progress extract --strip-components 2 "${REPO_PATH}::${LAST_SNAPSHOT}" home/${USER}/{Desktop,Documents,Music,techsupport,Videos,VirtualBox\ VMs,Downloads,Development,Dropbox,.ssh,.gnupg,.gitconfig,/.config/BraveSoftware/Brave-Browser,.config/Ferdi,.config/latte,.config/superpaper}
+# borg --progress extract --strip-components 2 "${REPO_PATH}::${LAST_SNAPSHOT}" home/${USER}/{Desktop,Documents,Music,techsupport,Videos,VirtualBox\ VMs,Downloads,Development,Dropbox,.ssh,.gnupg,.gitconfig,/.config/BraveSoftware/Brave-Browser,.config/Ferdi,.config/latte,.config/superpaper,.config/obsidian}
 
-borg --progress extract --strip-components 2 "${REPO_PATH}::${LAST_SNAPSHOT}" home/${USER}/.config/latte
+borg --progress extract --strip-components 2 "${REPO_PATH}::${LAST_SNAPSHOT}" home/${USER}/.config/obsidian
