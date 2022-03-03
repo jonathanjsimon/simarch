@@ -52,19 +52,23 @@ EOF
 
 if [ ${INSTALL_PKGS} -gt 0 ];
 then
-    /usr/bin/sudo perl -p -i -e 's/^.UseSyslog/UseSyslog/g; s/^.Color/Color/g; s/^.TotalDownload/TotalDownload/g; s/^.ParallelDownloads.*/ParallelDownloads = 10/g' /etc/pacman.conf
+    /usr/bin/sudo perl -p -i -e 's/^.UseSyslog/UseSyslog/g; s/^.Color/Color/g; s/^.TotalDownload/TotalDownload/g; s/^.ParallelDownloads.*/ParallelDownloads = 10/g;' /etc/pacman.conf
+    /usr/bin/sudo perl -p -i -e 's/^.EnableAUR/EnableAUR/g; s/^.EnableSnap/EnableSnap/g; s/^.EnableFlatpak/EnableFlatpak/g; s/^.CheckFlatpakUpdates/CheckFlatpakUpdates/g;' /etc/pamac.conf
     /usr/bin/sudo perl -p -i -e 's/^.MAKEFLAGS=.*/MAKEFLAGS="-j8"/g' /etc/makepkg.conf
 
+    # some more AUR helpers for completion
+    pamac install --no-confirm yay trizen paru pacaur
+
+    # remove pulse
+    /usr/bin/sudo pacman -Rdd pulseaudio pulseaudio-alsa pulseaudio-bluetooth pulseaudio-ctl pulseaudio-zeroconf
+    # install pipewire
+    pamac install --no-confirm manjaro-pipewire gst-plugin-pipewire plasma-pa pipewire-jack easyeffects pipewire-x11-bell realtime-privileges xdg-desktop-portal-kde
+
     # remove some things
-    pamac remove kate
+    pamac remove --no-confirm kate
 
     # some import starters
     pamac install --no-confirm caffeine-ng gnupg kgpg kwrite 1password opendoas emacs-nox gnome-keyring brave-browser git figlet bc dkms linux-headers zsh htop bwm-ng aria2 exa unzip
-
-    # remove pulse
-    sudo pacman -Rdd pulseaudio pulseaudio-alsa pulseaudio-bluetooth pulseaudio-ctl pulseaudio-zeroconf
-    # install pipewire
-    sudo pacman -S manjaro-pipewire gst-plugin-pipewire plasma-pa pipewire-jack easyeffects pipewire-x11-bell realtime-privileges xdg-desktop-portal-kde
 
     # theme stuff
     pamac install --no-confirm kvantum materia-kde kvantum-theme-materia materia-gtk-theme gtk-engine-murrine papirus-icon-theme plasma5-applets-virtual-desktop-bar-git
@@ -85,7 +89,7 @@ then
     pamac install --no-confirm atool
 
     # code
-    pamac install --no-confirm visual-studio-code-bin
+    pamac install --no-confirm visual-studio-code-bin gitkraken
 
     # VMs
     pamac install --no-confirm virtualbox virtualbox-guest-iso virtualbox-ext-oracle
@@ -94,7 +98,10 @@ then
     pamac install --no-confirm rustup gdb lldb
 
     # misc
-    pamac install --no-confirm discover baobab obsidian npm
+    pamac install --no-confirm discover baobab obsidian npm todoist-appimage
+
+    # some more AUR helpers for completion
+    pamac install --no-confirm trizen paru pacaur
 
     # dotnet core
     pamac install --no-confirm dotnet-host dotnet-runtime dotnet-runtime-3.1 dotnet-sdk \
@@ -104,6 +111,12 @@ then
 
     # installing this separately because it seems to no longer well and I wanted to be able to comment it out
     pamac install --no-confirm superpaper
+
+    # network tools
+    pamac install --no-confirm speedtest-cli speedtest++
+
+    # other utilities
+    pamac install --no-confirm jq highlight
 
     # get that rust
     rustup toolchain install stable
