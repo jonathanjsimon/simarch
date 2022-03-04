@@ -103,6 +103,7 @@ function install_packages()
 
     # set icons this way cuz I can
     /usr/lib/plasma-changeicons Papirus-Dark
+    /usr/bin/lookandfeeltool -a com.github.varlesh.materia-dark
 }
 
 function main()
