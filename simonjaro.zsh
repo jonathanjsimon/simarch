@@ -22,71 +22,71 @@ function binary_exists()
 
 function install_packages()
 {
+    paru_options=("--skipreview" "--noconfirm" "--sudoloop" "-S")
+    # get that rust, needed for some other packages
+    pamac install --no-confirm rustup gdb lldb
+    rustup toolchain install stable
+    rustup target add i686-unknown-linux-gnu
+
     # some more AUR helpers for completion
-    pamac install --no-confirm yay paru asp devtools python-dulwich python-fastimport python-gpgme python-paramiko bat
+    pamac install --no-confirm yay paru asp-git devtools-git python-dulwich python-fastimport python-gpgme python-paramiko bat
 
     # remove pulse
     /usr/bin/sudo pacman -Rdd pulseaudio pulseaudio-alsa pulseaudio-bluetooth pulseaudio-ctl pulseaudio-zeroconf
+    paru --skipreview --noconfirm --sudoloop -Rdd manjaro-pulse
     # install pipewire
-    pamac install --no-confirm manjaro-pipewire gst-plugin-pipewire plasma-pa pipewire-jack easyeffects pipewire-x11-bell realtime-privileges xdg-desktop-portal-kde
+    paru ${paru_options[@]} manjaro-pipewire gst-plugin-pipewire plasma-pa pipewire-jack easyeffects pipewire-x11-bell realtime-privileges xdg-desktop-portal-kde
 
     # remove some things
     pamac remove --no-confirm kate
 
+    # pamac handles this dependency set better than paru
+    pamac install --no-confirm linux-headers
+
     # some import starters
-    pamac install --no-confirm caffeine-ng gnupg kgpg kwrite 1password opendoas emacs-nox gnome-keyring brave-browser git figlet bc dkms linux-headers zsh htop bwm-ng aria2 exa unzip
+    paru ${paru_options[@]} caffeine-ng gnupg kgpg kwrite 1password opendoas emacs-nox gnome-keyring brave-browser git figlet bc dkms zsh htop bwm-ng aria2 exa unzip
 
     # theme stuff
-    pamac install --no-confirm kvantum materia-kde kvantum-theme-materia materia-gtk-theme gtk-engine-murrine papirus-icon-theme plasma5-applets-virtual-desktop-bar-git
+    paru ${paru_options[@]} kvantum materia-kde kvantum-theme-materia materia-gtk-theme gtk-engine-murrine papirus-icon-theme plasma5-applets-virtual-desktop-bar-git
 
     # dock and ulauncher stuff
-    pamac install --no-confirm latte-dock-git ulauncher ulauncher-theme-arc-dark-git
+    paru ${paru_options[@]} latte-dock-git ulauncher ulauncher-theme-arc-dark-git
 
     # cloud stuff
-    pamac install --no-confirm dropbox nextcloud-client
+    paru ${paru_options[@]} dropbox nextcloud-client
 
     # spotify AUR installer fails sometimes
-    pamac install --no-confirm spotify
+    paru ${paru_options[@]} spotify
 
     # chat and email
-    pamac install --no-confirm teams slack-desktop mailspring ferdi-bin pnpm-bin
+    paru ${paru_options[@]} teams slack-desktop mailspring ferdi-bin pnpm-bin
 
     # archive tool
-    pamac install --no-confirm atool
+    paru ${paru_options[@]} atool
 
     # code
-    pamac install --no-confirm visual-studio-code-bin gitkraken
+    paru ${paru_options[@]} visual-studio-code-bin gitkraken
 
     # VMs
     pamac install --no-confirm virtualbox virtualbox-guest-iso virtualbox-ext-oracle
 
-    # rust
-    pamac install --no-confirm rustup gdb lldb
-
     # misc
-    pamac install --no-confirm discover baobab obsidian npm todoist-appimage
-
-    # some more AUR helpers for completion
-    pamac install --no-confirm trizen paru pacaur
+    paru ${paru_options[@]} discover baobab obsidian npm todoist-appimage
 
     # dotnet core
-    pamac install --no-confirm dotnet-host dotnet-runtime dotnet-runtime-3.1 dotnet-sdk \
+    paru ${paru_options[@]} dotnet-host dotnet-runtime dotnet-runtime-3.1 dotnet-sdk \
                                 dotnet-sdk-3.1 dotnet-targeting-pack dotnet-targeting-pack-3.1 aspnet-runtime \
                                 aspnet-runtime-3.1 aspnet-targeting-pack aspnet-targeting-pack-3.1
 
 
     # installing this separately because it seems to no longer well and I wanted to be able to comment it out
-    pamac install --no-confirm superpaper
+    paru ${paru_options[@]} superpaper
 
     # network tools
-    pamac install --no-confirm speedtest-cli speedtest++
+    paru ${paru_options[@]} speedtest-cli speedtest++
 
     # other utilities
-    pamac install --no-confirm jq highlight
-
-    # get that rust
-    rustup toolchain install stable
-    rustup target add i686-unknown-linux-gnu
+    paru ${paru_options[@]} jq highlight
 
     # install some npm stuff
     sudo npm i -g html-minifier uglify-js uglifycss sass
@@ -94,12 +94,12 @@ function install_packages()
     # mono-git build-depends on mono so we have to install it first and then replace with mono-git
     if ! binary_exists mono;
     then
-        pamac install --no-confirm mono
-        pamac install --no-confirm mono-git mono-msbuild
+        paru ${paru_options[@]} mono
+        paru ${paru_options[@]} mono-git mono-msbuild
     fi
 
     # install some AUR things that take a while to compile
-    pamac install --no-confirm wine-valve proton
+    paru ${paru_options[@]} wine-valve proton
 
     # set icons this way cuz I can
     /usr/lib/plasma-changeicons Papirus-Dark
@@ -113,6 +113,12 @@ function main()
     # Configure pamac and pacman now so we can install dependencies
     /usr/bin/sudo perl -p -i -e 's/^.UseSyslog/UseSyslog/g; s/^.Color/Color/g; s/^.TotalDownload/TotalDownload/g; s/^.ParallelDownloads.*/ParallelDownloads = 10/g;' /etc/pacman.conf
     /usr/bin/sudo perl -p -i -e 's/^.EnableAUR/EnableAUR/g; s/^.EnableSnap/EnableSnap/g; s/^.EnableFlatpak/EnableFlatpak/g; s/^.CheckFlatpakUpdates/CheckFlatpakUpdates/g;' /etc/pamac.conf
+
+    cat << 'EOF' | /usr/bin/sudo tee -a /etc/pamac.conf
+EnableSnap
+EnableFlatpak
+CheckFlatpakUpdates
+EOF
     /usr/bin/sudo perl -p -i -e 's/^.MAKEFLAGS=.*/MAKEFLAGS="-j8"/g' /etc/makepkg.conf
 
     if [ ${BORG_RESTORE} -gt 0 ]
