@@ -199,16 +199,13 @@ do
     case "$arg" in
         --borg)
             BORG_RESTORE=1
-            exit 0
         ;;
         --borg=*)
             BORG_RESTORE=1
             REPO_PATH="${arg#--borg=}"
-            exit 0
         ;;
         --pkgs)
             INSTALL_PKGS=1
-            exit 0
         ;;
     esac
 done
