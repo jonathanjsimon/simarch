@@ -24,14 +24,16 @@ function install_packages()
 {
     # paru_options=("--skipreview" "--noconfirm" "--sudoloop" "-S")
     # ${paru_options[@]
-    }
     # get that rust, needed for some other packages
     /usr/bin/sudo pamac install --no-confirm rustup gdb lldb
     rustup toolchain install stable
     rustup target add i686-unknown-linux-gnu
 
-    # some more AUR helpers for completion
-    /usr/bin/sudo pamac install --no-confirm yay paru asp-git devtools-git python-dulwich python-fastimport python-gpgme python-paramiko bat
+    # some tools that need rust at the user level
+    pamac install --no-confirm bat
+
+    # yay
+    /usr/bin/sudo pamac install --no-confirm yay
 
     # remove pulse
     /usr/bin/sudo pacman -Rdd pulseaudio pulseaudio-alsa pulseaudio-bluetooth pulseaudio-ctl pulseaudio-zeroconf
@@ -62,7 +64,7 @@ function install_packages()
     /usr/bin/sudo pamac install --no-confirm spotify
 
     # chat and email
-    /usr/bin/sudo pamac install --no-confirm teams slack-desktop mailspring ferdi-bin pnpm-bin
+    /usr/bin/sudo pamac install --no-confirm teams slack-desktop mailspring ferdi-bin pnpm-bin zoom
 
     # borg + vorta
     /usr/bin/sudo pamac install --no-confirm borg vorta
@@ -119,11 +121,26 @@ function main()
     /usr/bin/sudo perl -p -i -e 's/^.UseSyslog/UseSyslog/g; s/^.Color/Color/g; s/^.TotalDownload/TotalDownload/g; s/^.ParallelDownloads.*/ParallelDownloads = 10/g;' /etc/pacman.conf
     /usr/bin/sudo perl -p -i -e 's/^.EnableAUR/EnableAUR/g; s/^.EnableSnap/EnableSnap/g; s/^.EnableFlatpak/EnableFlatpak/g; s/^.CheckFlatpakUpdates/CheckFlatpakUpdates/g;' /etc/pamac.conf
 
-    cat << 'EOF' | /usr/bin/sudo tee -a /etc/pamac.conf
+    if [ grep -c 'EnableSnap' /etc/pamac.conf -eq 0 ];
+    then
+        cat << EOF | /usr/bin/sudo tee -a /etc/pamac.conf
 EnableSnap
+EOF
+    fi
+
+    if [ grep -c 'EnableFlatpak' /etc/pamac.conf -eq 0 ];
+    then
+        cat << EOF | /usr/bin/sudo tee -a /etc/pamac.conf
 EnableFlatpak
+EOF
+    fi
+
+    if [ grep -c 'CheckFlatpakUpdates' /etc/pamac.conf -eq 0 ];
+    then
+        cat << EOF | /usr/bin/sudo tee -a /etc/pamac.conf
 CheckFlatpakUpdates
 EOF
+    fi
     /usr/bin/sudo perl -p -i -e 's/^.MAKEFLAGS=.*/MAKEFLAGS="-j8"/g' /etc/makepkg.conf
 
     if [ ${BORG_RESTORE} -gt 0 ]
