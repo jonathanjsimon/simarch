@@ -22,71 +22,74 @@ function binary_exists()
 
 function install_packages()
 {
-    paru_options=("--skipreview" "--noconfirm" "--sudoloop" "-S")
+    # paru_options=("--skipreview" "--noconfirm" "--sudoloop" "-S")
+    # ${paru_options[@]
+    }
     # get that rust, needed for some other packages
-    pamac install --no-confirm rustup gdb lldb
+    /usr/bin/sudo pamac install --no-confirm rustup gdb lldb
     rustup toolchain install stable
     rustup target add i686-unknown-linux-gnu
 
     # some more AUR helpers for completion
-    pamac install --no-confirm yay paru asp-git devtools-git python-dulwich python-fastimport python-gpgme python-paramiko bat
+    /usr/bin/sudo pamac install --no-confirm yay paru asp-git devtools-git python-dulwich python-fastimport python-gpgme python-paramiko bat
 
     # remove pulse
     /usr/bin/sudo pacman -Rdd pulseaudio pulseaudio-alsa pulseaudio-bluetooth pulseaudio-ctl pulseaudio-zeroconf
-    paru --skipreview --noconfirm --sudoloop -Rdd manjaro-pulse
     # install pipewire
-    paru ${paru_options[@]} manjaro-pipewire gst-plugin-pipewire plasma-pa pipewire-jack easyeffects pipewire-x11-bell realtime-privileges xdg-desktop-portal-kde
+    /usr/bin/sudo pamac install --no-confirm manjaro-pipewire gst-plugin-pipewire plasma-pa pipewire-jack easyeffects pipewire-x11-bell realtime-privileges xdg-desktop-portal-kde
 
     # remove some things
-    pamac remove --no-confirm kate
+    /usr/bin/sudo pamac remove --no-confirm kate
 
-    # pamac handles this dependency set better than paru
-    pamac install --no-confirm linux-headers
+    /usr/bin/sudo pamac install --no-confirm linux-headers dkms
 
     # some import starters
-    paru ${paru_options[@]} caffeine-ng gnupg kgpg kwrite 1password opendoas emacs-nox gnome-keyring brave-browser git figlet bc dkms zsh htop bwm-ng aria2 exa unzip
-
-    # theme stuff
-    paru ${paru_options[@]} kvantum materia-kde kvantum-theme-materia materia-gtk-theme gtk-engine-murrine papirus-icon-theme plasma5-applets-virtual-desktop-bar-git
-
-    # dock and ulauncher stuff
-    paru ${paru_options[@]} latte-dock-git ulauncher ulauncher-theme-arc-dark-git
-
-    # cloud stuff
-    paru ${paru_options[@]} dropbox nextcloud-client
-
-    # spotify AUR installer fails sometimes
-    paru ${paru_options[@]} spotify
-
-    # chat and email
-    paru ${paru_options[@]} teams slack-desktop mailspring ferdi-bin pnpm-bin
-
-    # archive tool
-    paru ${paru_options[@]} atool
-
-    # code
-    paru ${paru_options[@]} visual-studio-code-bin gitkraken
+    /usr/bin/sudo pamac install --no-confirm caffeine-ng gnupg kgpg kwrite 1password opendoas emacs-nox gnome-keyring brave-browser git figlet bc zsh htop bwm-ng aria2 exa unzip
 
     # VMs
-    pamac install --no-confirm virtualbox virtualbox-guest-iso virtualbox-ext-oracle
+    /usr/bin/sudo pamac install --no-confirm virtualbox virtualbox-guest-iso virtualbox-ext-oracle
+
+    # theme stuff
+    /usr/bin/sudo pamac install --no-confirm kvantum materia-kde kvantum-theme-materia materia-gtk-theme gtk-engine-murrine papirus-icon-theme plasma5-applets-virtual-desktop-bar-git
+
+    # dock and ulauncher stuff
+    /usr/bin/sudo pamac install --no-confirm latte-dock-git ulauncher ulauncher-theme-arc-dark-git
+
+    # cloud stuff
+    /usr/bin/sudo pamac install --no-confirm dropbox nextcloud-client
+
+    # spotify AUR installer fails sometimes
+    /usr/bin/sudo pamac install --no-confirm spotify
+
+    # chat and email
+    /usr/bin/sudo pamac install --no-confirm teams slack-desktop mailspring ferdi-bin pnpm-bin
+
+    # borg + vorta
+    /usr/bin/sudo pamac install --no-confirm borg vorta
+
+    # archive tool
+    /usr/bin/sudo pamac install --no-confirm atool
+
+    # code
+    /usr/bin/sudo pamac install --no-confirm visual-studio-code-bin gitkraken
 
     # misc
-    paru ${paru_options[@]} discover baobab obsidian npm todoist-appimage
+    /usr/bin/sudo pamac install --no-confirm discover baobab obsidian npm todoist-appimage
 
     # dotnet core
-    paru ${paru_options[@]} dotnet-host dotnet-runtime dotnet-runtime-3.1 dotnet-sdk \
+    /usr/bin/sudo pamac install --no-confirm dotnet-host dotnet-runtime dotnet-runtime-3.1 dotnet-sdk \
                                 dotnet-sdk-3.1 dotnet-targeting-pack dotnet-targeting-pack-3.1 aspnet-runtime \
                                 aspnet-runtime-3.1 aspnet-targeting-pack aspnet-targeting-pack-3.1
 
 
     # installing this separately because it seems to no longer well and I wanted to be able to comment it out
-    paru ${paru_options[@]} superpaper
+    /usr/bin/sudo pamac install --no-confirm superpaper
 
     # network tools
-    paru ${paru_options[@]} speedtest-cli speedtest++
+    /usr/bin/sudo pamac install --no-confirm speedtest-cli speedtest++
 
     # other utilities
-    paru ${paru_options[@]} jq highlight
+    /usr/bin/sudo pamac install --no-confirm jq highlight
 
     # install some npm stuff
     sudo npm i -g html-minifier uglify-js uglifycss sass
@@ -94,12 +97,12 @@ function install_packages()
     # mono-git build-depends on mono so we have to install it first and then replace with mono-git
     if ! binary_exists mono;
     then
-        paru ${paru_options[@]} mono
-        paru ${paru_options[@]} mono-git mono-msbuild
+        /usr/bin/sudo pamac install --no-confirm mono
+        /usr/bin/sudo pamac install --no-confirm mono-git mono-msbuild
     fi
 
     # install some AUR things that take a while to compile
-    paru ${paru_options[@]} wine-valve proton
+    /usr/bin/sudo pamac install --no-confirm wine-valve proton
 
     # set icons this way cuz I can
     /usr/lib/plasma-changeicons Papirus-Dark
@@ -109,6 +112,8 @@ function install_packages()
 function main()
 {
     pushd ~
+
+    while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
 
     # Configure pamac and pacman now so we can install dependencies
     /usr/bin/sudo perl -p -i -e 's/^.UseSyslog/UseSyslog/g; s/^.Color/Color/g; s/^.TotalDownload/TotalDownload/g; s/^.ParallelDownloads.*/ParallelDownloads = 10/g;' /etc/pacman.conf
@@ -134,7 +139,7 @@ EOF
 
             if [ "${INSTALL_BORG:l}" == 'y' ];
             then
-                pamac install --no-confirm borg
+                /usr/bin/sudo pamac install --no-confirm borg
             fi
         fi
 
