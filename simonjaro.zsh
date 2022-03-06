@@ -22,93 +22,96 @@ function binary_exists()
 
 function install_packages()
 {
-    # paru_options=("--skipreview" "--noconfirm" "--sudoloop" "-S")
-    # ${paru_options[@]
-    # get that rust, needed for some other packages
-    /usr/bin/sudo pamac install --no-confirm rustup gdb lldb
+    yay_options=("--useask" "--sudoloop" "--nocleanmenu" "--nodiffmenu" "--noconfirm")
+    # ${yay_options[@]}
+
+    # get that rust, needed for some other packages + yay
+    /usr/bin/sudo pamac install  --no-confirm rustup gdb lldb yay base-devel
     rustup toolchain install stable
     rustup target add i686-unknown-linux-gnu
 
-    # some tools that need rust at the user level
-    pamac install --no-confirm bat
+    # theme stuff
+    yes | yay ${yay_options[@]} -S kvantum materia-kde kvantum-theme-materia materia-gtk-theme gtk-engine-murrine papirus-icon-theme
 
-    # yay
-    /usr/bin/sudo pamac install --no-confirm yay
+    # set the theme
+    /usr/bin/lookandfeeltool -a com.github.varlesh.materia-dark
+    kvantummanager --set MateriaDark
 
-    # remove pulse
-    /usr/bin/sudo pacman -Rdd pulseaudio pulseaudio-alsa pulseaudio-bluetooth pulseaudio-ctl pulseaudio-zeroconf
+    # remove pulse, kate, etc
+    yes | yay ${yay_options[@]} -Rdd pulseaudio pulseaudio-alsa pulseaudio-bluetooth pulseaudio-ctl pulseaudio-zeroconf manjaro-pulse jack2 kate
     # install pipewire
-    /usr/bin/sudo pamac install --no-confirm manjaro-pipewire gst-plugin-pipewire plasma-pa pipewire-jack easyeffects pipewire-x11-bell realtime-privileges xdg-desktop-portal-kde
-
-    # remove some things
-    /usr/bin/sudo pamac remove --no-confirm kate
-
-    /usr/bin/sudo pamac install --no-confirm linux-headers dkms
+    yes | yay ${yay_options[@]} -S manjaro-pipewire gst-plugin-pipewire plasma-pa pipewire-jack easyeffects pipewire-x11-bell realtime-privileges xdg-desktop-portal-kde
 
     # some import starters
-    /usr/bin/sudo pamac install --no-confirm caffeine-ng gnupg kgpg kwrite 1password opendoas emacs-nox gnome-keyring brave-browser git figlet bc zsh htop bwm-ng aria2 exa unzip
+    yes | yay ${yay_options[@]} -S caffeine-ng gnupg kgpg kwrite 1password opendoas emacs-nox gnome-keyring brave-browser git figlet bc zsh htop bwm-ng aria2 exa unzip
 
-    # VMs
-    /usr/bin/sudo pamac install --no-confirm virtualbox virtualbox-guest-iso virtualbox-ext-oracle
+    # virtualbox + linux kernel headers - DKMS should update after installation in next step
+    target_kernel_headers=$(for f in `mhwd-kernel -li | awk 'NR>2 {print $2}'`; do pkgnamebase=`basename "${f%.*}"`; echo "${pkgnamebase}-headers ${pkgnamebase}-virtualbox-host-modules"; done | paste -sd ' ')
+    target_kernel_headers_array=("${(@s/ /)target_kernel_headers}")
+    yes | yay ${yay_options[@]} -S virtualbox virtualbox-guest-iso virtualbox-ext-oracle virtualbox-host-dkms linux-headers dkms ${target_kernel_headers_array[@]}
 
-    # theme stuff
-    /usr/bin/sudo pamac install --no-confirm kvantum materia-kde kvantum-theme-materia materia-gtk-theme gtk-engine-murrine papirus-icon-theme plasma5-applets-virtual-desktop-bar-git
+    # for some reason, linux414 headers get installed
+    yes | yay ${yay_options[@]} -Rdd linux414-headers
+    yes | yay ${yay_options[@]} -Rdd linux414-virtualbox-host-modules
+
+    # gnome-keyring
+    yes | yay ${yay_options[@]} -S libgnome-keyring
 
     # dock and ulauncher stuff
-    /usr/bin/sudo pamac install --no-confirm latte-dock-git ulauncher ulauncher-theme-arc-dark-git
+    yes | yay ${yay_options[@]} -S latte-dock-git ulauncher ulauncher-theme-arc-dark-git plasma5-applets-virtual-desktop-bar-git
+
+    systemctl --user enable --now ulauncher.service
 
     # cloud stuff
-    /usr/bin/sudo pamac install --no-confirm dropbox nextcloud-client
+    yes | yay ${yay_options[@]} -S dropbox nextcloud-client
 
     # spotify AUR installer fails sometimes
-    /usr/bin/sudo pamac install --no-confirm spotify
+    yes | yay ${yay_options[@]} -S spotify
 
     # chat and email
-    /usr/bin/sudo pamac install --no-confirm teams slack-desktop mailspring ferdi-bin pnpm-bin zoom
+    yes | yay ${yay_options[@]} -S teams slack-desktop mailspring ferdi-bin pnpm-bin zoom
 
     # borg + vorta
-    /usr/bin/sudo pamac install --no-confirm borg vorta
+    yes | yay ${yay_options[@]} -S borg vorta
 
     # archive tool
-    /usr/bin/sudo pamac install --no-confirm atool
+    yes | yay ${yay_options[@]} -S atool
 
     # code
-    /usr/bin/sudo pamac install --no-confirm visual-studio-code-bin gitkraken
+    yes | yay ${yay_options[@]} -S visual-studio-code-bin gitkraken
 
     # misc
-    /usr/bin/sudo pamac install --no-confirm discover baobab obsidian npm todoist-appimage
+    yes | yay ${yay_options[@]} -S discover baobab obsidian npm todoist-appimage freecad
 
     # dotnet core
-    /usr/bin/sudo pamac install --no-confirm dotnet-host dotnet-runtime dotnet-runtime-3.1 dotnet-sdk \
+    yes | yay ${yay_options[@]} -S dotnet-host dotnet-runtime dotnet-runtime-3.1 dotnet-sdk \
                                 dotnet-sdk-3.1 dotnet-targeting-pack dotnet-targeting-pack-3.1 aspnet-runtime \
                                 aspnet-runtime-3.1 aspnet-targeting-pack aspnet-targeting-pack-3.1
 
 
     # installing this separately because it seems to no longer well and I wanted to be able to comment it out
-    /usr/bin/sudo pamac install --no-confirm superpaper
+    yes | yay ${yay_options[@]} -S superpaper
 
     # network tools
-    /usr/bin/sudo pamac install --no-confirm speedtest-cli speedtest++
+    yes | yay ${yay_options[@]} -S speedtest-cli speedtest++ protonvpn-gui
 
     # other utilities
-    /usr/bin/sudo pamac install --no-confirm jq highlight
+    yes | yay ${yay_options[@]} -S jq highlight bat
 
     # install some npm stuff
-    sudo npm i -g html-minifier uglify-js uglifycss sass
+    /usr/bin/sudo npm i -g html-minifier uglify-js uglifycss sass
+
+    # install some AUR things that take a while to compile
 
     # mono-git build-depends on mono so we have to install it first and then replace with mono-git
     if ! binary_exists mono;
     then
-        /usr/bin/sudo pamac install --no-confirm mono
-        /usr/bin/sudo pamac install --no-confirm mono-git mono-msbuild
+        yes | yay ${yay_options[@]} -S automake autoconf
+        yes | yay ${yay_options[@]} -S mono
+        yes | yay ${yay_options[@]} -S mono-git mono-msbuild
     fi
-
-    # install some AUR things that take a while to compile
-    /usr/bin/sudo pamac install --no-confirm wine-valve proton
-
-    # set icons this way cuz I can
-    /usr/lib/plasma-changeicons Papirus-Dark
-    /usr/bin/lookandfeeltool -a com.github.varlesh.materia-dark
+    # yes | yay ${yay_options[@]} -S mingw-w64-freetype2
+    yes | yay ${yay_options[@]} -S wine-valve proton
 }
 
 function main()
@@ -121,21 +124,21 @@ function main()
     /usr/bin/sudo perl -p -i -e 's/^.UseSyslog/UseSyslog/g; s/^.Color/Color/g; s/^.TotalDownload/TotalDownload/g; s/^.ParallelDownloads.*/ParallelDownloads = 10/g;' /etc/pacman.conf
     /usr/bin/sudo perl -p -i -e 's/^.EnableAUR/EnableAUR/g; s/^.EnableSnap/EnableSnap/g; s/^.EnableFlatpak/EnableFlatpak/g; s/^.CheckFlatpakUpdates/CheckFlatpakUpdates/g;' /etc/pamac.conf
 
-    if [ grep -c 'EnableSnap' /etc/pamac.conf -eq 0 ];
+    if [ `grep -c 'EnableSnap' /etc/pamac.conf` -eq 0 ];
     then
         cat << EOF | /usr/bin/sudo tee -a /etc/pamac.conf
 EnableSnap
 EOF
     fi
 
-    if [ grep -c 'EnableFlatpak' /etc/pamac.conf -eq 0 ];
+    if [ `grep -c 'EnableFlatpak' /etc/pamac.conf` -eq 0 ];
     then
         cat << EOF | /usr/bin/sudo tee -a /etc/pamac.conf
 EnableFlatpak
 EOF
     fi
 
-    if [ grep -c 'CheckFlatpakUpdates' /etc/pamac.conf -eq 0 ];
+    if [ `grep -c 'CheckFlatpakUpdates' /etc/pamac.conf` -eq 0 ];
     then
         cat << EOF | /usr/bin/sudo tee -a /etc/pamac.conf
 CheckFlatpakUpdates
@@ -156,7 +159,7 @@ EOF
 
             if [ "${INSTALL_BORG:l}" == 'y' ];
             then
-                /usr/bin/sudo pamac install --no-confirm borg
+                yes | yay ${yay_options[@]} -S borg
             fi
         fi
 
@@ -203,6 +206,17 @@ EOF
     cat << EOF | /usr/bin/sudo tee /etc/sysctl.d/99-max-watchers.conf
 fs.inotify.max_user_watchers = 1000000
 EOF
+
+# into ~/.config/1Password/settings/settings.json
+# {
+#   "ui.routes.lastUsedRoute": "{\"type\":\"ItemList\",\"content\":{\"unlockedRoute\":{\"collectionUuid\":\"everything\"},\"itemListType\":{\"type\":\"Vault\",\"content\":\"1A\"},\"category\":null,\"sortBehavior\":null}}",
+#   "app.theme": "dark",
+#   "passwordGenerator.size.characters": 25,
+#   "passwordGenerator.includeSymbols": true,
+#   "browsers.extension.enabled": true,
+#   "keybinds.open": "CommandOrControl+Shift+\\",
+#   "keybinds.autoFill": ""
+# }
 
     /usr/bin/sudo sysctl --system
 
