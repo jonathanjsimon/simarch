@@ -96,10 +96,10 @@ function install_packages()
     yes | yay ${yay_options[@]} -S speedtest-cli speedtest++ protonvpn-gui
 
     # other utilities
-    yes | yay ${yay_options[@]} -S jq highlight bat ncdu
+    yes | yay ${yay_options[@]} -S jq highlight bat ncdu shiny-mirrors auto-cpufreq-git
 
     # install some npm stuff
-    /usr/bin/sudo npm i -g html-minifier uglify-js uglifycss sass
+    /usr/bin/sudo npm i -g html-minifier uglify-js uglifycss sass jshint
 
     # install some AUR things that take a while to compile
 
@@ -217,6 +217,9 @@ EOF
 #   "keybinds.open": "CommandOrControl+Shift+\\",
 #   "keybinds.autoFill": ""
 # }
+
+# into ~/.config/gtk-3.0/settings.ini and ~/.config/gtk-4.0/settings.ini
+# gtk-theme-name=Materia-dark
 
     /usr/bin/sudo sysctl --system
 
