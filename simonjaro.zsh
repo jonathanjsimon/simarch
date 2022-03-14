@@ -96,7 +96,7 @@ function install_packages()
     yes | yay ${yay_options[@]} -S speedtest-cli speedtest++ protonvpn-gui
 
     # other utilities
-    yes | yay ${yay_options[@]} -S jq highlight bat ncdu shiny-mirrors auto-cpufreq-git
+    yes | yay ${yay_options[@]} -S jq highlight bat ncdu shiny-mirrors auto-cpufreq-git bmap-tools
 
     # install some npm stuff
     /usr/bin/sudo npm i -g html-minifier uglify-js uglifycss sass jshint
