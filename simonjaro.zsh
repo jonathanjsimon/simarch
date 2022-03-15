@@ -53,6 +53,7 @@ function install_packages()
         mkdir -p ~/.local/share/xfce4/terminal/colorschemes/
         wget -O ~/.local/share/xfce4/terminal/colorschemes/base16-tomorrow-night.16.theme https://raw.githubusercontent.com/afq984/base16-xfce4-terminal/master/colorschemes/base16-tomorrow-night.16.theme
         wget -O ~/.local/share/xfce4/terminal/colorschemes/base16-tomorrow-night.theme https://raw.githubusercontent.com/afq984/base16-xfce4-terminal/master/colorschemes/base16-tomorrow-night.theme
+        xfconf-query -c xsettings -p /Net/ThemeName -s "Matcha-dark-azul"
     fi
 
     if [ ${MIN_PKGS} -eq 0 ];
