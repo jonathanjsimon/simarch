@@ -2,6 +2,7 @@
 
 INSTALL_PKGS=0
 MIN_PKGS=0
+PIPEWIRE=0
 BORG_RESTORE=0
 REPO_PATH=""
 PASSPHRASE=""
@@ -38,7 +39,7 @@ function install_packages()
     rustup target add i686-unknown-linux-gnu
 
     # theme stuff
-    if [ ${MIN_PKGS} -eq 0 ];
+    if [ "$XDG_CURRENT_DESKTOP" = "KDE" ];
     then
         yes | yay ${yay_options[@]} -S kvantum materia-kde kvantum-theme-materia materia-gtk-theme gtk-engine-murrine papirus-icon-theme
 
@@ -56,19 +57,22 @@ function install_packages()
         xfconf-query -c xsettings -p /Net/ThemeName -s "Matcha-dark-azul"
     fi
 
-    if [ ${MIN_PKGS} -eq 0 ];
+    if [ "$XDG_CURRENT_DESKTOP" = "KDE" ];
+    then
+        yes | yay ${yay_options[@]} -Rdd kate
+        yes | yay ${yay_options[@]} -S kgpg kwrite
+    fi
+
+    if [ ${MIN_PKGS} -eq 0 ] && [ ${PIPEWIRE} -eq 1 ];
     then
         # remove pulse, kate, etc
-        yes | yay ${yay_options[@]} -Rdd pulseaudio pulseaudio-alsa pulseaudio-bluetooth pulseaudio-ctl pulseaudio-zeroconf manjaro-pulse jack2 kate
+        yes | yay ${yay_options[@]} -Rdd pulseaudio pulseaudio-alsa pulseaudio-bluetooth pulseaudio-ctl pulseaudio-zeroconf manjaro-pulse jack2
         # install pipewire
-        yes | yay ${yay_options[@]} -S manjaro-pipewire gst-plugin-pipewire plasma-pa pipewire-jack easyeffects pipewire-x11-bell realtime-privileges xdg-desktop-portal-kde
-
-        yes | yay ${yay_options[@]} -S kgpg kwrite 1password
+        yes | yay ${yay_options[@]} -S manjaro-pipewire gst-plugin-pipewire plasma-pa pipewire-jack easyeffects pipewire-x11-bell realtime-privileges xdg-desktop-portal-kde xdg-desktop-portal-gtk
     fi
 
     # some import starters
     yes | yay ${yay_options[@]} -S caffeine-ng gnupg opendoas emacs-nox gnome-keyring brave-browser git figlet bc zsh htop bwm-ng aria2 exa unzip
-
 
     # virtualbox + linux kernel headers - DKMS should update after installation in next step
     if [ $IS_VM -eq 1 ];
@@ -109,6 +113,9 @@ function install_packages()
 
         # borg + vorta
         yes | yay ${yay_options[@]} -S borg vorta
+
+        # password manager
+        yes | yay ${yay_options[@]} -S 1password
     fi
 
     # archive tool
@@ -129,8 +136,10 @@ function install_packages()
         yes | yay ${yay_options[@]} -S obsidian todoist-appimage freecad
     fi
 
-    # if KDE
-    # yes | yay ${yay_options[@]} -S discover
+    if [ "$XDG_CURRENT_DESKTOP" = "KDE" ];
+    then
+        yes | yay ${yay_options[@]} -S discover
+    fi
 
     # misc
     yes | yay ${yay_options[@]} -S baobab npm
@@ -314,6 +323,9 @@ do
         --minpkgs)
             INSTALL_PKGS=1
             MIN_PKGS=1
+        ;;
+        --pipewire)
+            PIPEWIRE=1
         ;;
     esac
 done
