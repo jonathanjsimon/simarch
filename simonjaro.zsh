@@ -149,6 +149,12 @@ function install_packages()
                                 dotnet-sdk-3.1 dotnet-targeting-pack dotnet-targeting-pack-3.1 aspnet-runtime \
                                 aspnet-runtime-3.1 aspnet-targeting-pack aspnet-targeting-pack-3.1
 
+    # java
+    yes | yay ${yay_options[@]} -S jre-openjdk jre11-openjdk jre8-openjdk \
+                                    openjdk-doc openjdk11-doc openjdk8-doc \
+                                    openjdk-src openjdk11-src openjdk8-src
+
+
     if [ ${MIN_PKGS} -eq 0 ];
     then
         # installing this separately because it seems to no longer well and I wanted to be able to comment it out
