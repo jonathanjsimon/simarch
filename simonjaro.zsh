@@ -121,6 +121,9 @@ function install_packages()
     # archive tool
     yes | yay ${yay_options[@]} -S atool
 
+    # srm
+    yes | yay ${yay_options[@]} -S srm
+
     # code
     yes | yay ${yay_options[@]} -S visual-studio-code-bin
 
