@@ -124,6 +124,12 @@ function install_packages()
     # srm
     yes | yay ${yay_options[@]} -S srm
 
+    # subversion + git
+    yes | yay ${yay_options[@]} -S git subversion
+
+    # thefuck
+    yes | yay ${yay_options[@]} -S thefuck
+
     # code
     yes | yay ${yay_options[@]} -S visual-studio-code-bin
 
