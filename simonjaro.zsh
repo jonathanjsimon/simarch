@@ -57,6 +57,13 @@ function install_packages()
         xfconf-query -c xsettings -p /Net/ThemeName -s "Matcha-dark-azul"
     fi
 
+    if [ ${MIN_PKGS} -eq 0 ]
+    then
+        yes | yay ${yay_options[@]} -S nerd-fonts-complete
+    else
+        yes | yay ${yay_options[@]} -S nerd-fonts-fira-code
+    fi
+
     if [ "$XDG_CURRENT_DESKTOP" = "KDE" ];
     then
         yes | yay ${yay_options[@]} -Rdd kate
@@ -72,7 +79,7 @@ function install_packages()
     fi
 
     # some import starters
-    yes | yay ${yay_options[@]} -S caffeine-ng gnupg opendoas emacs-nox gnome-keyring brave-browser git figlet bc zsh htop bwm-ng aria2 exa unzip
+    yes | yay ${yay_options[@]} -S caffeine-ng gnupg opendoas emacs-nox gnome-keyring brave-browser git git-lfs figlet bc zsh htop bwm-ng aria2 exa unzip
 
     # virtualbox + linux kernel headers - DKMS should update after installation in next step
     if [ $IS_VM -eq 1 ];
@@ -109,7 +116,7 @@ function install_packages()
         yes | yay ${yay_options[@]} -S spotify
 
         # chat and email
-        yes | yay ${yay_options[@]} -S teams slack-desktop mailspring ferdi-nightly-bin pnpm-bin zoom
+        yes | yay ${yay_options[@]} -S teams slack-desktop mailspring rambox-pro-bin pnpm-bin zoom
 
         # borg + vorta
         yes | yay ${yay_options[@]} -S borg vorta
