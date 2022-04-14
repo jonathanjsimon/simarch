@@ -118,6 +118,8 @@ function install_packages()
         # chat and email
         yes | yay ${yay_options[@]} -S teams slack-desktop mailspring ferdi-nightly-bin pnpm-bin zoom
 
+
+
         # borg + vorta
         yes | yay ${yay_options[@]} -S borg vorta
 
