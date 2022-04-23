@@ -33,10 +33,13 @@ function install_packages()
     yay_options=("--useask" "--sudoloop" "--nocleanmenu" "--nodiffmenu" "--noconfirm")
     # ${yay_options[@]}
 
-    # get that rust, needed for some other packages + yay
+    # get that rust, needed for some other packages + yay + python
     /usr/bin/sudo pamac install  --no-confirm rustup gdb lldb yay base-devel python python-pip ipython
     rustup toolchain install stable
     rustup target add i686-unknown-linux-gnu
+
+    # ranger + atool + supporting utilities
+    yes | yay ${yay_options[@]} -S ranger atool-git elinks ffmpegthumbnailer highlight libcaca lynx mediainfo odt2txt perl-image-exiftool poppler python-chardet ueberzug w3m bzip2 cpio gzip lha xz lzop p7zip tar unace unrar zip unzip zstd
 
     # theme stuff
     if [ "$XDG_CURRENT_DESKTOP" = "KDE" ];
