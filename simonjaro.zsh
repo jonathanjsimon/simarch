@@ -34,7 +34,7 @@ function install_packages()
     # ${yay_options[@]}
 
     # get that rust, needed for some other packages + yay
-    /usr/bin/sudo pamac install  --no-confirm rustup gdb lldb yay base-devel python python-pip
+    /usr/bin/sudo pamac install  --no-confirm rustup gdb lldb yay base-devel python python-pip ipython
     rustup toolchain install stable
     rustup target add i686-unknown-linux-gnu
 
@@ -118,8 +118,6 @@ function install_packages()
         # chat and email
         yes | yay ${yay_options[@]} -S teams slack-desktop mailspring ferdi-nightly-bin pnpm-bin zoom
 
-
-
         # borg + vorta
         yes | yay ${yay_options[@]} -S borg vorta
 
@@ -183,7 +181,7 @@ function install_packages()
     yes | yay ${yay_options[@]} -S speedtest-cli speedtest++ protonvpn-gui
 
     # other utilities
-    yes | yay ${yay_options[@]} -S jq highlight bat ncdu shiny-mirrors auto-cpufreq-git bmap-tools
+    yes | yay ${yay_options[@]} -S jq highlight bat ncdu shiny-mirrors auto-cpufreq-git bmap-tools zip ranger atool
 
     # install some npm stuff
     /usr/bin/sudo npm i -g html-minifier uglify-js uglifycss sass jshint
