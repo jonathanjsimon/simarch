@@ -82,7 +82,7 @@ function install_packages()
     fi
 
     # some import starters
-    yes | yay ${yay_options[@]} -S caffeine-ng gnupg opendoas emacs-nox gnome-keyring brave-browser git git-lfs figlet bc zsh htop bwm-ng aria2 exa unzip
+    yes | yay ${yay_options[@]} -S caffeine-ng gnupg opendoas emacs-nox gnome-keyring brave-browser git git-lfs figlet bc zsh htop bwm-ng aria2 exa unzip mssql-tools
 
     # virtualbox + linux kernel headers - DKMS should update after installation in next step
     if [ $IS_VM -eq 1 ];
