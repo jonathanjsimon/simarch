@@ -126,6 +126,9 @@ function install_packages()
 
         # password manager
         yes | yay ${yay_options[@]} -S 1password
+
+        # protonvpn
+        yes | yay ${yay_options[@]} -S protonvpn-gui
     fi
 
     # archive tool
