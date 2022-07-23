@@ -119,7 +119,7 @@ function install_packages()
         yes | yay ${yay_options[@]} -S spotify
 
         # chat and email
-        yes | yay ${yay_options[@]} -S teams slack-desktop mailspring ferdi-nightly-bin pnpm-bin zoom
+        yes | yay ${yay_options[@]} -S teams slack-desktop mailspring ferdium-bin pnpm-bin zoom
 
         # borg + vorta
         yes | yay ${yay_options[@]} -S borg vorta
@@ -150,6 +150,12 @@ function install_packages()
     then
         # gitkraken
         yes | yay ${yay_options[@]} -S gitkraken
+
+        # gittyup
+        yes | yay ${yay_options[@]} -S gittyup-git
+
+        # gitahead
+        yes | yay ${yay_options[@]} -S gitahead
     fi
 
     if [ ${MIN_PKGS} -eq 0 ];
@@ -330,7 +336,7 @@ EOF
     then
         LAST_SNAPSHOT=`borg list --short --last 1 "${REPO_PATH}"`
         echo "${LAST_SNAPSHOT}"
-        borg --progress extract --strip-components 2 "${REPO_PATH}::${LAST_SNAPSHOT}" home/${USER}/{Desktop,Documents,Music,techsupport,Videos,VirtualBox\ VMs,Downloads,Development,Dropbox,.ssh,.gnupg,.gitconfig,/.config/BraveSoftware/Brave-Browser,.config/Ferdi,.config/superpaper,.config/obsidian}
+        borg --progress extract --strip-components 2 "${REPO_PATH}::${LAST_SNAPSHOT}" home/${USER}/{Desktop,Documents,Music,techsupport,Videos,VirtualBox\ VMs,Downloads,Development,Dropbox,.ssh,.gnupg,.gitconfig,/.config/BraveSoftware/Brave-Browser,.config/Ferdium,.config/superpaper,.config/obsidian,.config/deluge,.config/Mailspring,.config/Slack,.config/ulauncher,.local/share/ulauncher,.local/share/Vorta}
         # borg --progress extract --strip-components 2 "${REPO_PATH}::${LAST_SNAPSHOT}" home/${USER}/.config/obsidian
     fi
 }
