@@ -78,8 +78,15 @@ function install_packages()
         # remove pulse, kate, etc
         yes | yay ${yay_options[@]} -Rdd pulseaudio pulseaudio-alsa pulseaudio-bluetooth pulseaudio-ctl pulseaudio-zeroconf manjaro-pulse jack2
         # install pipewire
-        yes | yay ${yay_options[@]} -S manjaro-pipewire gst-plugin-pipewire plasma-pa pipewire-jack easyeffects pipewire-x11-bell realtime-privileges xdg-desktop-portal-kde xdg-desktop-portal-gtk
+        yes | yay ${yay_options[@]} -S manjaro-pipewire wireplumber phonon-qt5-gstreamer gst-plugin-pipewire pipewire-jack easyeffects pipewire-x11-bell realtime-privileges xdg-desktop-portal-gtk
+
+	# only install kde stuffs if on kde
+	if [ "$XDG_CURRENT_DESKTOP" = "KDE" ];
+	then
+	    yes | yay ${yay_options[@]} -S plasma-pa xdg-desktop-portal-kde
+        fi
     fi
+
 
     # some import starters
     yes | yay ${yay_options[@]} -S caffeine-ng gnupg opendoas emacs-nox gnome-keyring brave-browser git git-lfs figlet bc zsh htop bwm-ng aria2 exa unzip mssql-tools
@@ -89,12 +96,14 @@ function install_packages()
     then
         target_kernel_headers=$(for f in `mhwd-kernel -li | awk 'NR>2 {print $2}'`; do pkgnamebase=`basename "${f%.*}"`; echo "${pkgnamebase}-headers"; done | paste -sd ' ')
         target_kernel_headers_array=("${(@s/ /)target_kernel_headers}")
-        yes | yay ${yay_options[@]} -S virtualbox-guest-utils linux-headers dkms ${target_kernel_headers_array[@]}
+        yes | yay ${yay_options[@]} -S virtualbox-guest-utils ${target_kernel_headers_array[@]}
     else
         target_kernel_headers=$(for f in `mhwd-kernel -li | awk 'NR>2 {print $2}'`; do pkgnamebase=`basename "${f%.*}"`; echo "${pkgnamebase}-headers ${pkgnamebase}-virtualbox-host-modules"; done | paste -sd ' ')
         target_kernel_headers_array=("${(@s/ /)target_kernel_headers}")
-        yes | yay ${yay_options[@]} -S virtualbox virtualbox-guest-iso virtualbox-ext-oracle virtualbox-host-dkms linux-headers dkms ${target_kernel_headers_array[@]}
+        yes | yay ${yay_options[@]} -S virtualbox virtualbox-guest-iso virtualbox-ext-oracle ${target_kernel_headers_array[@]}
     fi
+
+    yes | yay ${yay_options[@]} -S linux-headers dkms
 
     # for some reason, linux414 headers get installed
     yes | yay ${yay_options[@]} -Rdd linux414-headers
@@ -106,7 +115,7 @@ function install_packages()
     if [ ${MIN_PKGS} -eq 0 ];
     then
         # dock and ulauncher stuff
-        yes | yay ${yay_options[@]} -S latte-dock-git ulauncher ulauncher-theme-arc-dark-git plasma5-applets-virtual-desktop-bar-git
+        yes | yay ${yay_options[@]} -S latte-dock-git ulauncher plasma5-applets-virtual-desktop-bar-git
         systemctl --user enable --now ulauncher.service
     fi
 
@@ -178,9 +187,9 @@ function install_packages()
                                 aspnet-runtime-3.1 aspnet-targeting-pack aspnet-targeting-pack-3.1
 
     # java
-    yes | yay ${yay_options[@]} -S jre-openjdk jre11-openjdk jre8-openjdk \
-                                    openjdk-doc openjdk11-doc openjdk8-doc \
-                                    openjdk-src openjdk11-src openjdk8-src
+    yes | yay ${yay_options[@]} -S jre-openjdk jre17-openjdk jre11-openjdk jre8-openjdk \
+                                    openjdk-doc openjdk17-doc openjdk11-doc openjdk8-doc \
+                                    openjdk-src openjdk17-src openjdk11-src openjdk8-src
 
 
     if [ ${MIN_PKGS} -eq 0 ];
@@ -261,9 +270,9 @@ EOF
                 read "INSTALL_BORG?Install borg [y/N]? "
             done
 
-            if [ "${INSTALL_BORG:l}" == 'y' ];
+            if [ "${INSTALL_BORG:l}" = 'y' ];
             then
-                yes | yay ${yay_options[@]} -S borg
+                /usr/bin/sudo pamac install borg
             fi
         fi
 
@@ -336,7 +345,7 @@ EOF
     then
         LAST_SNAPSHOT=`borg list --short --last 1 "${REPO_PATH}"`
         echo "${LAST_SNAPSHOT}"
-        borg --progress extract --strip-components 2 "${REPO_PATH}::${LAST_SNAPSHOT}" home/${USER}/{Desktop,Documents,Music,techsupport,Videos,VirtualBox\ VMs,Downloads,Development,Dropbox,.ssh,.gnupg,.gitconfig,/.config/BraveSoftware/Brave-Browser,.config/Ferdium,.config/superpaper,.config/obsidian,.config/deluge,.config/Mailspring,.config/Slack,.config/ulauncher,.local/share/ulauncher,.local/share/Vorta}
+        borg --progress extract --strip-components 2 "${REPO_PATH}::${LAST_SNAPSHOT}" home/${USER}/{Desktop,Documents,Music,techsupport,Videos,VirtualBox\ VMs,Downloads,Development,Dropbox,.ssh,.gnupg,.gitconfig,.dotfiles,.config/BraveSoftware/Brave-Browser,.config/Ferdium,.config/superpaper,.config/obsidian,.config/deluge,.config/Mailspring,.config/Slack,.config/ulauncher,.local/share/ulauncher,.local/share/Vorta}
         # borg --progress extract --strip-components 2 "${REPO_PATH}::${LAST_SNAPSHOT}" home/${USER}/.config/obsidian
     fi
 }
