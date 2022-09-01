@@ -140,6 +140,12 @@ function install_packages()
         yes | yay ${yay_options[@]} -S protonvpn-gui
     fi
 
+    # bmap-tools
+    yes | yay ${yay_options[@]} -S bmap-tools
+
+    # pigz
+    yes | yay ${yay_options[@]} -S pigz
+
     # archive tool
     yes | yay ${yay_options[@]} -S atool
 
