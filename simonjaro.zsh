@@ -39,7 +39,7 @@ function install_packages()
     rustup target add i686-unknown-linux-gnu
 
     # ranger + atool + supporting utilities
-    yes | yay ${yay_options[@]} -S ranger atool-git elinks ffmpegthumbnailer highlight libcaca lynx mediainfo odt2txt perl-image-exiftool poppler python-chardet ueberzug w3m bzip2 cpio gzip lha xz lzop p7zip tar unace unrar zip unzip zstd
+    yes | yay ${yay_options[@]} -S ranger atool elinks ffmpegthumbnailer highlight libcaca lynx mediainfo odt2txt perl-image-exiftool poppler python-chardet ueberzug w3m bzip2 cpio gzip lha xz lzop p7zip tar unace unrar zip unzip zstd
 
     # theme stuff
     if [ "$XDG_CURRENT_DESKTOP" = "KDE" ];
@@ -62,22 +62,32 @@ function install_packages()
 
     if [ ${MIN_PKGS} -eq 0 ]
     then
-        yes | yay ${yay_options[@]} -S nerd-fonts-complete
-    else
+        # instead of nerd-fonts-complete
         yes | yay ${yay_options[@]} -S nerd-fonts-fira-code
     fi
 
     if [ "$XDG_CURRENT_DESKTOP" = "KDE" ];
     then
+        # replace kate with kwrite
         yes | yay ${yay_options[@]} -Rdd kate
-        yes | yay ${yay_options[@]} -S kgpg kwrite
+        yes | yay ${yay_options[@]} -S kwrite
+
+        # kgpg
+        yes | yay ${yay_options[@]} -S kgpg
     fi
 
     if [ ${MIN_PKGS} -eq 0 ] && [ ${PIPEWIRE} -eq 1 ];
     then
         # remove pulse, kate, etc
-        yes | yay ${yay_options[@]} -Rdd pulseaudio pulseaudio-alsa pulseaudio-bluetooth pulseaudio-ctl pulseaudio-zeroconf manjaro-pulse jack2
-        # install pipewire
+        yes | yay ${yay_options[@]} -Rdd pulseaudio
+        yes | yay ${yay_options[@]} -Rdd pulseaudio-alsa
+        yes | yay ${yay_options[@]} -Rdd pulseaudio-bluetooth
+        yes | yay ${yay_options[@]} -Rdd pulseaudio-ctl
+        yes | yay ${yay_options[@]} -Rdd pulseaudio-zeroconf
+        yes | yay ${yay_options[@]} -Rdd manjaro-pulse
+        yes | yay ${yay_options[@]} -Rdd jack2
+
+         # install pipewire
         yes | yay ${yay_options[@]} -S manjaro-pipewire wireplumber phonon-qt5-gstreamer gst-plugin-pipewire pipewire-jack easyeffects pipewire-x11-bell realtime-privileges xdg-desktop-portal-gtk
 
 	# only install kde stuffs if on kde
@@ -86,7 +96,6 @@ function install_packages()
 	    yes | yay ${yay_options[@]} -S plasma-pa xdg-desktop-portal-kde
         fi
     fi
-
 
     # some import starters
     yes | yay ${yay_options[@]} -S caffeine-ng gnupg opendoas emacs-nox gnome-keyring brave-browser git git-lfs figlet bc zsh htop bwm-ng aria2 exa unzip mssql-tools
@@ -97,7 +106,8 @@ function install_packages()
         target_kernel_headers=$(for f in `mhwd-kernel -li | awk 'NR>2 {print $2}'`; do pkgnamebase=`basename "${f%.*}"`; echo "${pkgnamebase}-headers"; done | paste -sd ' ')
         target_kernel_headers_array=("${(@s/ /)target_kernel_headers}")
         yes | yay ${yay_options[@]} -S virtualbox-guest-utils ${target_kernel_headers_array[@]}
-    else
+    elif [ ${MIN_PKGS} -eq 0 ];
+    then
         target_kernel_headers=$(for f in `mhwd-kernel -li | awk 'NR>2 {print $2}'`; do pkgnamebase=`basename "${f%.*}"`; echo "${pkgnamebase}-headers ${pkgnamebase}-virtualbox-host-modules"; done | paste -sd ' ')
         target_kernel_headers_array=("${(@s/ /)target_kernel_headers}")
         yes | yay ${yay_options[@]} -S virtualbox virtualbox-guest-iso virtualbox-ext-oracle ${target_kernel_headers_array[@]}
@@ -137,7 +147,7 @@ function install_packages()
         yes | yay ${yay_options[@]} -S 1password
 
         # protonvpn
-        yes | yay ${yay_options[@]} -S protonvpn-gui
+        yes | yay ${yay_options[@]} -S protonvpn
     fi
 
     # bmap-tools
@@ -145,6 +155,13 @@ function install_packages()
 
     # pigz
     yes | yay ${yay_options[@]} -S pigz
+
+    # hdparm
+    yes | yay ${yay_options[@]} -S hdparm
+
+    # touchegg
+    yes | yay ${yay_options[@]} -S touchegg
+    sudo systemctl enable --now touchegg
 
     # archive tool
     yes | yay ${yay_options[@]} -S atool
@@ -176,7 +193,9 @@ function install_packages()
     if [ ${MIN_PKGS} -eq 0 ];
     then
         # misc
-        yes | yay ${yay_options[@]} -S obsidian todoist-appimage freecad
+        yes | yay ${yay_options[@]} -S obsidian-appimage
+        yes | yay ${yay_options[@]} -S todoist-appimage
+        yes | yay ${yay_options[@]} -S freecad
     fi
 
     if [ "$XDG_CURRENT_DESKTOP" = "KDE" ];
@@ -205,7 +224,7 @@ function install_packages()
     fi
 
     # network tools
-    yes | yay ${yay_options[@]} -S speedtest-cli speedtest++ protonvpn-gui
+    yes | yay ${yay_options[@]} -S speedtest-cli speedtest++
 
     # other utilities
     yes | yay ${yay_options[@]} -S jq highlight bat ncdu shiny-mirrors auto-cpufreq-git bmap-tools zip ranger atool
@@ -229,7 +248,8 @@ function install_packages()
     if [ ${MIN_PKGS} -eq 0 ];
     then
         # yes | yay ${yay_options[@]} -S mingw-w64-freetype2
-        yes | yay ${yay_options[@]} -S wine-valve proton
+        yes | yay ${yay_options[@]} -S wine-valve
+        yes | yay ${yay_options[@]} -S proton
     fi
 }
 
@@ -351,7 +371,7 @@ EOF
     then
         LAST_SNAPSHOT=`borg list --short --last 1 "${REPO_PATH}"`
         echo "${LAST_SNAPSHOT}"
-        borg --progress extract --strip-components 2 "${REPO_PATH}::${LAST_SNAPSHOT}" home/${USER}/{Desktop,Documents,Music,techsupport,Videos,VirtualBox\ VMs,Downloads,Development,Dropbox,.ssh,.gnupg,.gitconfig,.dotfiles,.config/BraveSoftware/Brave-Browser,.config/Ferdium,.config/superpaper,.config/obsidian,.config/deluge,.config/Mailspring,.config/Slack,.config/ulauncher,.local/share/ulauncher,.local/share/Vorta}
+        borg --progress extract --strip-components 2 "${REPO_PATH}::${LAST_SNAPSHOT}" home/${USER}/{.ssh,.gnupg,.gitconfig,.dotfiles,.config/touchegg,.config/BraveSoftware/Brave-Browser,.config/Ferdium,.config/superpaper,.config/obsidian,.config/deluge,.config/Mailspring,.config/Slack,.config/ulauncher,.local/share/ulauncher,.local/share/Vorta,Desktop,Documents,Music,techsupport,Videos,Downloads,Development,VirtualBox\ VMs,Dropbox}
         # borg --progress extract --strip-components 2 "${REPO_PATH}::${LAST_SNAPSHOT}" home/${USER}/.config/obsidian
     fi
 }
