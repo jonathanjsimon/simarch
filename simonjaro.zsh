@@ -44,7 +44,7 @@ function install_packages()
     # theme stuff
     if [ "$XDG_CURRENT_DESKTOP" = "KDE" ];
     then
-        yes | yay ${yay_options[@]} -S kvantum materia-kde kvantum-theme-materia materia-gtk-theme gtk-engine-murrine papirus-icon-theme
+        yes | yay ${yay_options[@]} -S kvantum materia-kde kvantum-theme-materia materia-gtk-theme gtk-engine-murrine papirus-icon-theme nord-konsole
 
         # set the theme
         /usr/bin/lookandfeeltool -a com.github.varlesh.materia-dark
