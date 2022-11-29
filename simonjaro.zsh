@@ -363,6 +363,16 @@ EOF
 fs.inotify.max_user_watchers = 1000000
 EOF
 
+    cat << EOF | /usr/bin/sudo tee /etc/sysctl.d/bbr.conf
+net.core.default_qdisc=fq
+net.ipv4.tcp_congestion_control=bbr
+EOF
+
+modprobe bbr
+sysctl -p /etc/sysctl.d/bbr.conf
+sysctl net.ipv4.tcp_available_congestion_control
+sysctl net.ipv4.tcp_congestion_control
+
 # into ~/.config/1Password/settings/settings.json
 # {
 #   "ui.routes.lastUsedRoute": "{\"type\":\"ItemList\",\"content\":{\"unlockedRoute\":{\"collectionUuid\":\"everything\"},\"itemListType\":{\"type\":\"Vault\",\"content\":\"1A\"},\"category\":null,\"sortBehavior\":null}}",
