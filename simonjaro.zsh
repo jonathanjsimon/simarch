@@ -205,6 +205,9 @@ function install_packages()
 
         # gitahead
         yes | yay ${yay_options[@]} -S gitahead
+
+        # meld
+        yes | yay ${yay_options[@]} -S meld
     fi
 
     if [ ${MIN_PKGS} -eq 0 ];
