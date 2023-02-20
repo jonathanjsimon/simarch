@@ -63,7 +63,8 @@ function install_packages()
     if [ ${MIN_PKGS} -eq 0 ]
     then
         # instead of nerd-fonts-complete
-        yes | yay ${yay_options[@]} -S nerd-fonts-fira-code
+        yes | yay ${yay_options[@]} -S ttf-firacode-nerd
+        yes | yay ${yay_options[@]} -S ttf-iosevka-nerd
     fi
 
     if [ "$XDG_CURRENT_DESKTOP" = "KDE" ];
@@ -165,6 +166,15 @@ function install_packages()
 
         # protonvpn
         yes | yay ${yay_options[@]} -S protonvpn
+
+        # solaar
+        yes | yay ${yay_options[@]} -S solaar
+
+        # openrazer-meta
+        yes | yay ${yay_options[@]} -S openrazer-meta
+
+        # polychromatic
+        yes | yay ${yay_options[@]} -S polychromatic
     fi
 
     # bmap-tools
