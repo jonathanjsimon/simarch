@@ -3,9 +3,7 @@
 INSTALL_PKGS=0
 MIN_PKGS=0
 PIPEWIRE=0
-BORG_RESTORE=0
-REPO_PATH=""
-PASSPHRASE=""
+WINE=0
 
 function binary_exists()
 {
@@ -118,24 +116,31 @@ function install_packages()
     yes | yay ${yay_options[@]} -S unzip
     yes | yay ${yay_options[@]} -S mssql-tools
 
-    # virtualbox + linux kernel headers - DKMS should update after installation in next step
-    if [ $IS_VM -eq 1 ];
-    then
-        target_kernel_headers=$(for f in `mhwd-kernel -li | awk 'NR>2 {print $2}'`; do pkgnamebase=`basename "${f%.*}"`; echo "${pkgnamebase}-headers"; done | paste -sd ' ')
-        target_kernel_headers_array=("${(@s/ /)target_kernel_headers}")
-        yes | yay ${yay_options[@]} -S virtualbox-guest-utils ${target_kernel_headers_array[@]}
-    elif [ ${MIN_PKGS} -eq 0 ];
-    then
-        target_kernel_headers=$(for f in `mhwd-kernel -li | awk 'NR>2 {print $2}'`; do pkgnamebase=`basename "${f%.*}"`; echo "${pkgnamebase}-headers ${pkgnamebase}-virtualbox-host-modules"; done | paste -sd ' ')
-        target_kernel_headers_array=("${(@s/ /)target_kernel_headers}")
-        yes | yay ${yay_options[@]} -S virtualbox virtualbox-guest-iso virtualbox-ext-oracle ${target_kernel_headers_array[@]}
-    fi
+    for f in `sudo mhwd-kernel -li | awk 'NR>2 {print $2}'`
+    do
+        yes | yay ${yay_options[@]} -S ${f}-headers ${f}-virtualbox-host-modules
+    done
 
     yes | yay ${yay_options[@]} -S linux-headers dkms
 
-    # for some reason, linux414 headers get installed
-    yes | yay ${yay_options[@]} -Rdd linux414-headers
-    yes | yay ${yay_options[@]} -Rdd linux414-virtualbox-host-modules
+    # fix virtualbox after the AUR sha1sums are fixed
+#
+#    # virtualbox + linux kernel headers - DKMS should update after installation in next step
+#    if [ $IS_VM -eq 1 ];
+#    then
+#        target_kernel_headers=$(for f in `mhwd-kernel -li | awk 'NR>2 {print $2}'`; do pkgnamebase=`basename "${f%.*}"`; echo "${pkgnamebase}-headers"; done | paste -sd ' ')
+#        target_kernel_headers_array=("${(@s/ /)target_kernel_headers}")
+#        yes | yay ${yay_options[@]} -S virtualbox-guest-utils ${target_kernel_headers_array[@]}
+#    elif [ ${MIN_PKGS} -eq 0 ];
+#    then
+#        target_kernel_headers=$(for f in `mhwd-kernel -li | awk 'NR>2 {print $2}'`; do pkgnamebase=`basename "${f%.*}"`; echo "${pkgnamebase}-headers ${pkgnamebase}-virtualbox-host-modules"; done | paste -sd ' ')
+#        target_kernel_headers_array=("${(@s/ /)target_kernel_headers}")
+#        yes | yay ${yay_options[@]} -S virtualbox virtualbox-guest-iso virtualbox-ext-oracle ${target_kernel_headers_array[@]}
+#    fi
+#
+#    # for some reason, linux414 headers get installed
+#    yes | yay ${yay_options[@]} -Rdd linux414-headers
+#    yes | yay ${yay_options[@]} -Rdd linux414-virtualbox-host-modules
 
     # gnome-keyring
     yes | yay ${yay_options[@]} -S libgnome-keyring
@@ -149,14 +154,22 @@ function install_packages()
 
     if [ $IS_VM -ne 1 ] && [ ${MIN_PKGS} -eq 0 ];
     then
+        # docker
+        yes | yay ${yay_options[@]} -S docker docker-buildx
+        sudo systemctl enable --now docker
+
         # cloud stuff
         yes | yay ${yay_options[@]} -S dropbox nextcloud-client
 
         # spotify AUR installer fails sometimes
         yes | yay ${yay_options[@]} -S spotify
 
-        # chat and email
-        yes | yay ${yay_options[@]} -S teams slack-desktop mailspring ferdium-bin pnpm-bin zoom
+        # chat
+        yes | yay ${yay_options[@]} -S teams
+        yes | yay ${yay_options[@]} -S slack-desktop
+        yes | yay ${yay_options[@]} -S ferdium-nightly-bin
+        yes | yay ${yay_options[@]} -S pnpm-bin
+        yes | yay ${yay_options[@]} -S zoom
 
         # borg + vorta
         yes | yay ${yay_options[@]} -S borg vorta
@@ -269,13 +282,10 @@ function install_packages()
     then
         yes | yay ${yay_options[@]} -S automake autoconf
         yes | yay ${yay_options[@]} -S mono
-        if [ ${MIN_PKGS} -eq 0 ];
-        then
-            yes | yay ${yay_options[@]} -S mono-git mono-msbuild
-        fi
+        yes | yay ${yay_options[@]} -S mono-msbuild
     fi
 
-    if [ ${MIN_PKGS} -eq 0 ];
+    if [ ${WINE} -eq 1 ];
     then
         # yes | yay ${yay_options[@]} -S mingw-w64-freetype2
         yes | yay ${yay_options[@]} -S wine-valve
@@ -315,49 +325,6 @@ EOF
     fi
     /usr/bin/sudo perl -p -i -e 's/^.MAKEFLAGS=.*/MAKEFLAGS="-j8"/g' /etc/makepkg.conf
 
-    if [ ${BORG_RESTORE} -gt 0 ]
-    then
-        if ! binary_exists borg;
-        then
-            echo "borg must be installed"
-            INSTALL_BORG=''
-            while [ "${INSTALL_BORG:l}" != 'y' ] && [ "${INSTALL_BORG:l}" != 'n' ];
-            do
-                read "INSTALL_BORG?Install borg [y/N]? "
-            done
-
-            if [ "${INSTALL_BORG:l}" = 'y' ];
-            then
-                /usr/bin/sudo pamac install borg
-            fi
-        fi
-
-        if binary_exists borg;
-        then
-            while [ -z "${REPO_PATH}" ] || ! [ -d "${REPO_PATH}" ];
-            do
-                read "REPO_PATH?Borg repo path? "
-            done
-
-            while [ -z "${PASSPHRASE}" ];
-            do
-                read "PASSPHRASE?Repo passphrase (${REPO_PATH}): "
-                if [ -n "${PASSPHRASE}" ];
-                then
-                    export BORG_PASSPHRASE="${PASSPHRASE}"
-                    borg info "${REPO_PATH}" &> /dev/null
-                    if [ $? -gt 0 ] ;
-                    then
-                        echo "Passphrase incorrect"
-                        PASSPHRASE=""
-                    fi
-                fi
-            done
-        else
-            echo "borg still not installed, ignoring borg restore request"
-        fi
-    fi
-
     cat << 'EOF' | /usr/bin/sudo tee /etc/udev/rules.d/81-wifi-powersave.rules
 # never power save wifi, the chip will disconnect from the network randomly on 5GHz
 
@@ -373,7 +340,7 @@ permit persist :wheel
 EOF
 
     cat << EOF | /usr/bin/sudo tee /etc/sysctl.d/99-max-watchers.conf
-fs.inotify.max_user_watchers = 1000000
+fs.inotify.max_user_watches = 1000000
 EOF
 
     cat << EOF | /usr/bin/sudo tee /etc/sysctl.d/bbr.conf
@@ -406,26 +373,11 @@ sysctl net.ipv4.tcp_congestion_control
     then
         install_packages
     fi
-
-    if [ ${BORG_RESTORE} -gt 0 ];
-    then
-        LAST_SNAPSHOT=`borg list --short --last 1 "${REPO_PATH}"`
-        echo "${LAST_SNAPSHOT}"
-        borg --progress extract --strip-components 2 "${REPO_PATH}::${LAST_SNAPSHOT}" home/${USER}/{.ssh,.gnupg,.gitconfig,.dotfiles,.config/touchegg,.config/BraveSoftware/Brave-Browser,.config/Ferdium,.config/superpaper,.config/obsidian,.config/deluge,.config/Mailspring,.config/Slack,.config/ulauncher,.local/share/ulauncher,.local/share/Vorta,Desktop,Documents,Music,techsupport,Videos,Downloads,Development,VirtualBox\ VMs,Dropbox}
-        # borg --progress extract --strip-components 2 "${REPO_PATH}::${LAST_SNAPSHOT}" home/${USER}/.config/obsidian
-    fi
 }
 
 for arg in "$@"
 do
     case "$arg" in
-        --borg)
-            BORG_RESTORE=1
-        ;;
-        --borg=*)
-            BORG_RESTORE=1
-            REPO_PATH="${arg#--borg=}"
-        ;;
         --pkgs)
             INSTALL_PKGS=1
         ;;
@@ -435,6 +387,9 @@ do
         ;;
         --pipewire)
             PIPEWIRE=1
+        ;;
+        --wine)
+            WINE=1
         ;;
     esac
 done
