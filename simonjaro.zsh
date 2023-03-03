@@ -63,6 +63,9 @@ function install_packages()
         # instead of nerd-fonts-complete
         yes | yay ${yay_options[@]} -S ttf-firacode-nerd
         yes | yay ${yay_options[@]} -S ttf-iosevka-nerd
+        yes | yay ${yay_options[@]} -S ttf-font-awesome
+        yes | yay ${yay_options[@]} -S otf-font-awesome
+        yes | yay ${yay_options[@]} -S polybar
     fi
 
     if [ "$XDG_CURRENT_DESKTOP" = "KDE" ];
@@ -224,10 +227,7 @@ function install_packages()
         yes | yay ${yay_options[@]} -S gitkraken
 
         # gittyup
-        yes | yay ${yay_options[@]} -S gittyup-git
-
-        # gitahead
-        yes | yay ${yay_options[@]} -S gitahead
+        yes | yay ${yay_options[@]} -S gittyup
 
         # meld
         yes | yay ${yay_options[@]} -S meld
