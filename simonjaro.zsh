@@ -239,6 +239,10 @@ function install_packages()
         yes | yay ${yay_options[@]} -S obsidian-appimage
         yes | yay ${yay_options[@]} -S todoist-appimage
         yes | yay ${yay_options[@]} -S freecad
+        yes | yay ${yay_options[@]} -S deluge-gtk
+        yes | yay ${yay_options[@]} -S plex-desktop
+        yes | yay ${yay_options[@]} -S youtube-dl
+        yes | yay ${yay_options[@]} -S yt-dlp
     fi
 
     if [ "$XDG_CURRENT_DESKTOP" = "KDE" ];
