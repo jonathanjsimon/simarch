@@ -256,7 +256,8 @@ function install_packages()
     # dotnet core
     yes | yay ${yay_options[@]} -S dotnet-host dotnet-runtime dotnet-runtime-3.1 dotnet-sdk \
                                 dotnet-sdk-3.1 dotnet-targeting-pack dotnet-targeting-pack-3.1 aspnet-runtime \
-                                aspnet-runtime-3.1 aspnet-targeting-pack aspnet-targeting-pack-3.1
+                                aspnet-runtime-3.1 aspnet-targeting-pack aspnet-targeting-pack-3.1 \
+                                dotnet-sdk-6.0 dotnet-runtime-6.0 aspnet-targeting-pack-6.0 aspnet-runtime-6.0
 
     # java
     yes | yay ${yay_options[@]} -S jre-openjdk jre17-openjdk jre11-openjdk jre8-openjdk \
