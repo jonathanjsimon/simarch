@@ -39,6 +39,11 @@ function install_packages()
     # ranger + atool + supporting utilities
     yes | yay ${yay_options[@]} -S ranger atool elinks ffmpegthumbnailer highlight libcaca lynx mediainfo odt2txt perl-image-exiftool poppler python-chardet ueberzug w3m bzip2 cpio gzip lha xz lzop p7zip tar unace unrar zip unzip zstd
 
+    if [ "$XDG_CURRENT_DESKTOP" = "KDE" ];
+    then
+        balooctl disable
+    fi
+
     # theme stuff
     if [ "$XDG_CURRENT_DESKTOP" = "KDE" ];
     then
