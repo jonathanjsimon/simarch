@@ -81,6 +81,6 @@ pushd ~
 
 LAST_SNAPSHOT=`borg list --short --last 1 "${REPO_PATH}"`
 
-borg --progress extract --strip-components 2 "${REPO_PATH}::${LAST_SNAPSHOT}" home/${USER}/{.Xmodmap,.histfile,.ssh,.gnupg,.gitconfig,.dotfiles,.config/touchegg,.config/BraveSoftware/Brave-Browser,.config/Ferdium,.config/superpaper,.config/obsidian,.config/deluge,.config/Slack,.config/ulauncher,.local/share/ulauncher,.local/share/Vorta,Desktop,Documents,Music,techsupport,Videos,Downloads,Development,VirtualBox\ VMs,Dropbox}
+borg --progress extract --strip-components 2 "${REPO_PATH}::${LAST_SNAPSHOT}" home/${USER}/{.Xmodmap,.histfile,.ssh,.gnupg,.gitconfig,.dotfiles,.local/share/Steam/,.config/touchegg,.config/BraveSoftware/Brave-Browser,.config/Ferdium,.config/superpaper,.config/obsidian,.config/deluge,.config/Slack,.config/ulauncher,.local/share/ulauncher,.local/share/Vorta,Desktop,Documents,Music,techsupport,Videos,Downloads,Development,VirtualBox\ VMs,Dropbox}
 
 popd
