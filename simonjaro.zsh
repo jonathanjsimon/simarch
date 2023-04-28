@@ -36,6 +36,10 @@ function install_packages()
     rustup toolchain install stable
     rustup target add i686-unknown-linux-gnu
 
+
+    # get caffeine installed early
+    yes | yay ${yay_options[@]} -S caffeine-ng
+
     # ranger + atool + supporting utilities
     yes | yay ${yay_options[@]} -S ranger atool elinks ffmpegthumbnailer highlight libcaca lynx mediainfo odt2txt perl-image-exiftool poppler python-chardet ueberzug w3m bzip2 cpio gzip lha xz lzop p7zip tar unace unrar zip unzip zstd
 
@@ -104,8 +108,14 @@ function install_packages()
         fi
     fi
 
+    # btrfs tools
+    if sudo btrfs subvolume show / >/dev/null 2>&1 ;
+    then
+        yes | yay ${yay_options[@]} -S btrfs-assistant btrfs-heatmap python-btrfs snapper bees btrfsmaintenance
+    fi
+
     # some import starters, separately for risk management purposes
-    yes | yay ${yay_options[@]} -S caffeine-ng
+
     yes | yay ${yay_options[@]} -S gnupg
     yes | yay ${yay_options[@]} -S opendoas
     yes | yay ${yay_options[@]} -S emacs-nox
@@ -131,7 +141,13 @@ function install_packages()
 
     yes | yay ${yay_options[@]} -S linux-headers dkms
 
-    # fix virtualbox after the AUR sha1sums are fixed
+    if [ $IS_VM -eq 0 ] && [ ${MIN_PKGS} -eq 0 ]
+    then
+        yes | yay ${yay_options[@]} -S virtualbox-ext-oracle virtualbox-bin-guest-iso virtualbox
+    # elif [ $IS_VM -eq 1 ]
+    # then
+
+    fi
 #
 #    # virtualbox + linux kernel headers - DKMS should update after installation in next step
 #    if [ $IS_VM -eq 1 ];
@@ -156,7 +172,8 @@ function install_packages()
     if [ ${MIN_PKGS} -eq 0 ];
     then
         # dock and ulauncher stuff
-        yes | yay ${yay_options[@]} -S latte-dock-git ulauncher plasma5-applets-virtual-desktop-bar-git
+        yes | yay ${yay_options[@]} -S ulauncher
+        yes | yay ${yay_options[@]} -S plasma5-applets-virtual-desktop-bar-git
         systemctl --user enable --now ulauncher.service
     fi
 
@@ -301,6 +318,9 @@ function install_packages()
         yes | yay ${yay_options[@]} -S wine-valve
         yes | yay ${yay_options[@]} -S proton
     fi
+
+    yes | yay ${yay_options[@]} -S plocate
+    sudo updatedb
 }
 
 function main()
