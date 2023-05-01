@@ -378,10 +378,10 @@ net.core.default_qdisc=fq
 net.ipv4.tcp_congestion_control=bbr
 EOF
 
-modprobe tcp_bbr
-sysctl -p /etc/sysctl.d/bbr.conf
-sysctl net.ipv4.tcp_available_congestion_control
-sysctl net.ipv4.tcp_congestion_control
+    modprobe tcp_bbr
+    sysctl -p /etc/sysctl.d/bbr.conf
+    sysctl net.ipv4.tcp_available_congestion_control
+    sysctl net.ipv4.tcp_congestion_control
 
 # into ~/.config/1Password/settings/settings.json
 # {
@@ -398,6 +398,16 @@ sysctl net.ipv4.tcp_congestion_control
 # gtk-theme-name=Materia-dark
 
     /usr/bin/sudo sysctl --system
+
+
+    cat << EOF | /usr/bin/sudo tee /etc/NetworkManager/dispatcher.d/09-timezone
+#!/bin/sh
+case "$2" in
+    connectivity-change)
+        timedatectl set-timezone "$(curl -sss --fail https://ipapi.co/timezone)"
+    ;;
+esac
+EOF
 
     if [ ${INSTALL_PKGS} -gt 0 ];
     then
