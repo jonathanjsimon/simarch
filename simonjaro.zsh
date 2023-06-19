@@ -123,6 +123,7 @@ function install_packages()
     yes | yay ${yay_options[@]} -S brave-browser
     yes | yay ${yay_options[@]} -S git
     yes | yay ${yay_options[@]} -S git-lfs
+    yes | yay ${yay_options[@]} -S gitflow-avh
     yes | yay ${yay_options[@]} -S figlet
     yes | yay ${yay_options[@]} -S bc
     yes | yay ${yay_options[@]} -S zsh
