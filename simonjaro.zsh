@@ -185,7 +185,9 @@ function install_packages()
         sudo systemctl enable --now docker
 
         # cloud stuff
-        yes | yay ${yay_options[@]} -S dropbox nextcloud-client
+        yes | yay ${yay_options[@]} -S python-gpgme # unlisted Dropbox dependency
+        yes | yay ${yay_options[@]} -S dropbox
+        yes | yay ${yay_options[@]} -S nextcloud-client
 
         # spotify AUR installer fails sometimes
         yes | yay ${yay_options[@]} -S spotify
