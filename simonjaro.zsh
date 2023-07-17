@@ -246,6 +246,9 @@ function install_packages()
     # code
     yes | yay ${yay_options[@]} -S visual-studio-code-bin
 
+    # intellij
+    yes | yay ${yay_options[@]} -S intellij-idea-ce
+
     if [ ${MIN_PKGS} -eq 0 ];
     then
         # gitkraken
