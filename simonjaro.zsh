@@ -115,7 +115,7 @@ function install_packages()
     fi
 
     # some import starters, separately for risk management purposes
-
+    yes | yay ${yay_options[@]} -S fzf
     yes | yay ${yay_options[@]} -S gnupg
     yes | yay ${yay_options[@]} -S opendoas
     yes | yay ${yay_options[@]} -S emacs-nox
@@ -216,6 +216,12 @@ function install_packages()
 
         # polychromatic
         yes | yay ${yay_options[@]} -S polychromatic
+
+        # battop
+        yes | yay ${yay_options[@]} -S battop
+
+        # nvtop
+        yes | yay ${yay_options[@]} -S nvtop
     fi
 
     # bmap-tools
@@ -249,6 +255,9 @@ function install_packages()
     # intellij
     yes | yay ${yay_options[@]} -S intellij-idea-ce
 
+    # scenebuilder
+    yes | yay ${yay_options[@]} -S javafx-scenebuilder
+
     if [ ${MIN_PKGS} -eq 0 ];
     then
         # gitkraken
@@ -264,7 +273,7 @@ function install_packages()
     if [ ${MIN_PKGS} -eq 0 ];
     then
         # misc
-        yes | yay ${yay_options[@]} -S obsidian-appimage
+        yes | yay ${yay_options[@]} -S obsidian
         yes | yay ${yay_options[@]} -S todoist-appimage
         yes | yay ${yay_options[@]} -S freecad
         yes | yay ${yay_options[@]} -S deluge-gtk
@@ -303,7 +312,7 @@ function install_packages()
     yes | yay ${yay_options[@]} -S speedtest-cli speedtest++
 
     # other utilities
-    yes | yay ${yay_options[@]} -S jq highlight bat ncdu shiny-mirrors auto-cpufreq-git bmap-tools zip ranger atool
+    yes | yay ${yay_options[@]} -S jq highlight bat ncdu shiny-mirrors bmap-tools zip ranger atool
 
     # install some npm stuff
     /usr/bin/sudo npm i -g html-minifier uglify-js uglifycss sass jshint
@@ -321,8 +330,9 @@ function install_packages()
     if [ ${WINE} -eq 1 ];
     then
         # yes | yay ${yay_options[@]} -S mingw-w64-freetype2
-        yes | yay ${yay_options[@]} -S wine-valve
-        yes | yay ${yay_options[@]} -S proton
+#         yes | yay ${yay_options[@]} -S wine-valve
+#         yes | yay ${yay_options[@]} -S proton
+        yes | yay ${yay_options[@]} -S wine
     fi
 
     yes | yay ${yay_options[@]} -S plocate
@@ -406,14 +416,14 @@ EOF
     /usr/bin/sudo sysctl --system
 
 
-    cat << EOF | /usr/bin/sudo tee /etc/NetworkManager/dispatcher.d/09-timezone
-#!/bin/sh
-case "$2" in
-    connectivity-change)
-        timedatectl set-timezone "$(curl -sss --fail https://ipapi.co/timezone)"
-    ;;
-esac
-EOF
+#     cat << EOF | /usr/bin/sudo tee /etc/NetworkManager/dispatcher.d/09-timezone
+# #!/bin/sh
+# case "$2" in
+#     connectivity-change)
+#         timedatectl set-timezone "$(curl -sss --fail https://ipapi.co/timezone)"
+#     ;;
+# esac
+# EOF
 
     if [ ${INSTALL_PKGS} -gt 0 ];
     then
