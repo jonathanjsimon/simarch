@@ -1,5 +1,7 @@
 #!/usr/bin/zsh
 
+STAGE1=0
+IS_TUXEDO=0
 INSTALL_PKGS=0
 MIN_PKGS=0
 PIPEWIRE=0
@@ -22,11 +24,18 @@ function binary_exists()
 
 function install_packages()
 {
+    MANUFACTURER="$(sudo dmidecode -s system-manufacturer)"
     IS_VM=0
-    if [ "$(sudo dmidecode -s system-manufacturer)" = "innotek GmbH" ];
-    then
-        IS_VM=1
-    fi
+
+    case "${MANUFACTURER}" in
+        "innotek GmbH")
+            IS_VM=1
+        ;;
+        "TUXEDO")
+            IS_TUXEDO=1
+        ;;
+    esac
+
 
     yay_options=("--useask" "--sudoloop" "--nocleanmenu" "--nodiffmenu" "--noconfirm")
     # ${yay_options[@]}
@@ -36,12 +45,59 @@ function install_packages()
     rustup toolchain install stable
     rustup target add i686-unknown-linux-gnu
 
+    if [ ${STAGE1} -eq 1 ]
+    then
+        for f in `sudo mhwd-kernel -li | awk 'NR>2 {print $2}'`
+        do
+            yes | yay ${yay_options[@]} -S ${f}-headers
+        done
+
+        yes | yay ${yay_options[@]} -S linux-headers dkms
+
+        if [ ${IS_TUXEDO} -eq 1 ];
+        then
+            yes | yay ${yay_options[@]} -S tuxedo-keyboard-dkms tuxedo-keyboard-ite-dkms
+            yes | yay ${yay_options[@]} -S tuxedo-control-center-bin
+            yes | yay ${yay_options[@]} -S tuxedo-touchpad-switch
+            yes | yay ${yay_options[@]} -S tuxedo-plymouth-one
+        fi
+
+        echo "You should really reboot now"
+
+        exit 0
+    fi
 
     # get caffeine installed early
     yes | yay ${yay_options[@]} -S caffeine-ng
 
     # ranger + atool + supporting utilities
-    yes | yay ${yay_options[@]} -S ranger atool elinks ffmpegthumbnailer highlight libcaca lynx mediainfo odt2txt perl-image-exiftool poppler python-chardet ueberzug w3m bzip2 cpio gzip lha xz lzop p7zip tar unace unrar zip unzip zstd
+    yes | yay ${yay_options[@]} -S ranger
+    yes | yay ${yay_options[@]} -S atool
+    yes | yay ${yay_options[@]} -S elinks
+    yes | yay ${yay_options[@]} -S ffmpegthumbnailer
+    yes | yay ${yay_options[@]} -S highlight
+    yes | yay ${yay_options[@]} -S libcaca
+    yes | yay ${yay_options[@]} -S lynx
+    yes | yay ${yay_options[@]} -S mediainfo
+    yes | yay ${yay_options[@]} -S odt2txt
+    yes | yay ${yay_options[@]} -S perl-image-exiftool
+    yes | yay ${yay_options[@]} -S poppler
+    yes | yay ${yay_options[@]} -S python-chardet
+    yes | yay ${yay_options[@]} -S ueberzug
+    yes | yay ${yay_options[@]} -S w3m
+    yes | yay ${yay_options[@]} -S bzip2
+    yes | yay ${yay_options[@]} -S cpio
+    yes | yay ${yay_options[@]} -S gzip
+    yes | yay ${yay_options[@]} -S lha
+    yes | yay ${yay_options[@]} -S xz
+    yes | yay ${yay_options[@]} -S lzop
+    yes | yay ${yay_options[@]} -S p7zip
+    yes | yay ${yay_options[@]} -S tar
+    yes | yay ${yay_options[@]} -S unace
+    yes | yay ${yay_options[@]} -S unrar
+    yes | yay ${yay_options[@]} -S zip
+    yes | yay ${yay_options[@]} -S unzip
+    yes | yay ${yay_options[@]} -S zstd
 
     if [ "$XDG_CURRENT_DESKTOP" = "KDE" ];
     then
@@ -51,12 +107,12 @@ function install_packages()
     # theme stuff
     if [ "$XDG_CURRENT_DESKTOP" = "KDE" ];
     then
-        yes | yay ${yay_options[@]} -S kvantum materia-kde kvantum-theme-materia materia-gtk-theme gtk-engine-murrine papirus-icon-theme nord-konsole
+        yes | yay ${yay_options[@]} -S kvantum gtk-engine-murrine nord-konsole
 
-        # set the theme
-        /usr/bin/lookandfeeltool -a com.github.varlesh.materia-dark
-        kvantummanager --set MateriaDark
-        /usr/bin/sudo wget -O /usr/share/konsole/base16-tomorrow-night.colorscheme https://raw.githubusercontent.com/cskeeters/base16-konsole/master/colorscheme/base16-tomorrow-night.colorscheme
+        # # set the theme
+        # /usr/bin/lookandfeeltool -a com.github.varlesh.materia-dark
+        # kvantummanager --set MateriaDark
+        # /usr/bin/sudo wget -O /usr/share/konsole/base16-tomorrow-night.colorscheme https://raw.githubusercontent.com/cskeeters/base16-konsole/master/colorscheme/base16-tomorrow-night.colorscheme
     fi
 
     if [ "$XDG_CURRENT_DESKTOP" = "XFCE" ];
@@ -135,19 +191,18 @@ function install_packages()
     yes | yay ${yay_options[@]} -S unzip
     yes | yay ${yay_options[@]} -S mssql-tools
 
+    chsh -s /usr/bin/zsh
+
     for f in `sudo mhwd-kernel -li | awk 'NR>2 {print $2}'`
     do
-        yes | yay ${yay_options[@]} -S ${f}-headers ${f}-virtualbox-host-modules
+        yes | yay ${yay_options[@]} -S ${f}-headers
     done
 
     yes | yay ${yay_options[@]} -S linux-headers dkms
 
     if [ $IS_VM -eq 0 ] && [ ${MIN_PKGS} -eq 0 ]
     then
-        yes | yay ${yay_options[@]} -S virtualbox-ext-oracle virtualbox-bin-guest-iso virtualbox
-    # elif [ $IS_VM -eq 1 ]
-    # then
-
+        yes | yay ${yay_options[@]} -S virtualbox-ext-oracle virtualbox-bin-guest-iso virtualbox-bin
     fi
 #
 #    # virtualbox + linux kernel headers - DKMS should update after installation in next step
@@ -173,9 +228,11 @@ function install_packages()
     if [ ${MIN_PKGS} -eq 0 ];
     then
         # dock and ulauncher stuff
+        yes | yay ${yay_options[@]} -S python-pytz # soft ulauncher dependency (ulauncher extension requires it)
+
         yes | yay ${yay_options[@]} -S ulauncher
         yes | yay ${yay_options[@]} -S plasma5-applets-virtual-desktop-bar-git
-        systemctl --user enable --now ulauncher.service
+        systemctl --user enable ulauncher.service
     fi
 
     if [ $IS_VM -ne 1 ] && [ ${MIN_PKGS} -eq 0 ];
@@ -235,7 +292,7 @@ function install_packages()
 
     # touchegg
     yes | yay ${yay_options[@]} -S touchegg
-    sudo systemctl enable --now touchegg
+    sudo systemctl enable touchegg
 
     # archive tool
     yes | yay ${yay_options[@]} -S atool
@@ -297,9 +354,11 @@ function install_packages()
                                 dotnet-sdk-6.0 dotnet-runtime-6.0 aspnet-targeting-pack-6.0 aspnet-runtime-6.0
 
     # java
-    yes | yay ${yay_options[@]} -S jre-openjdk jre17-openjdk jre11-openjdk jre8-openjdk \
+    yes | yay ${yay_options[@]} -S jdk-openjdk jrd17-openjdk jrd11-openjdk jrd8-openjdk \
                                     openjdk-doc openjdk17-doc openjdk11-doc openjdk8-doc \
                                     openjdk-src openjdk17-src openjdk11-src openjdk8-src
+
+    yes | yay ${yay_options[@]} -S visualvm
 
 
     if [ ${MIN_PKGS} -eq 0 ];
@@ -312,15 +371,13 @@ function install_packages()
     yes | yay ${yay_options[@]} -S speedtest-cli speedtest++
 
     # other utilities
-    yes | yay ${yay_options[@]} -S jq highlight bat ncdu shiny-mirrors bmap-tools zip ranger atool
+    yes | yay ${yay_options[@]} -S jq highlight bat ncdu shiny-mirrors bmap-tools
 
     # install some npm stuff
     /usr/bin/sudo npm i -g html-minifier uglify-js uglifycss sass jshint
 
-    # install some AUR things that take a while to compile
 
-    # mono-git build-depends on mono so we have to install it first and then replace with mono-git
-    if ! binary_exists mono;
+    if [ ${MIN_PKGS} -eq 0 ];
     then
         yes | yay ${yay_options[@]} -S automake autoconf
         yes | yay ${yay_options[@]} -S mono
@@ -329,9 +386,6 @@ function install_packages()
 
     if [ ${WINE} -eq 1 ];
     then
-        # yes | yay ${yay_options[@]} -S mingw-w64-freetype2
-#         yes | yay ${yay_options[@]} -S wine-valve
-#         yes | yay ${yay_options[@]} -S proton
         yes | yay ${yay_options[@]} -S wine
     fi
 
@@ -416,14 +470,16 @@ EOF
     /usr/bin/sudo sysctl --system
 
 
-#     cat << EOF | /usr/bin/sudo tee /etc/NetworkManager/dispatcher.d/09-timezone
-# #!/bin/sh
-# case "$2" in
-#     connectivity-change)
-#         timedatectl set-timezone "$(curl -sss --fail https://ipapi.co/timezone)"
-#     ;;
-# esac
-# EOF
+    cat << 'EOF' | /usr/bin/sudo tee /etc/NetworkManager/dispatcher.d/09-timezone
+#!/bin/sh
+case "$2" in
+    connectivity-change)
+        timedatectl set-timezone "$(curl -sss --fail https://ipapi.co/timezone)"
+    ;;
+esac
+EOF
+
+sudo chmod +x /etc/NetworkManager/dispatcher.d/09-timezone
 
     if [ ${INSTALL_PKGS} -gt 0 ];
     then
@@ -434,6 +490,9 @@ EOF
 for arg in "$@"
 do
     case "$arg" in
+        --stage1pkgs)
+            STAGE1=1
+        ;;
         --pkgs)
             INSTALL_PKGS=1
         ;;
