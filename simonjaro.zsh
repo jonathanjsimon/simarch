@@ -107,7 +107,7 @@ function install_packages()
     # theme stuff
     if [ "$XDG_CURRENT_DESKTOP" = "KDE" ];
     then
-        yes | yay ${yay_options[@]} -S kvantum gtk-engine-murrine nord-konsole
+        yes | yay ${yay_options[@]} -S kvantum gtk-engine-murrine papirus-icon-theme nord-konsole
 
         # # set the theme
         # /usr/bin/lookandfeeltool -a com.github.varlesh.materia-dark
@@ -279,6 +279,13 @@ function install_packages()
 
         # nvtop
         yes | yay ${yay_options[@]} -S nvtop
+
+        # powerpanel
+        yes | yay ${yay_options[@]} -S powerpanel
+
+        # remote desktop
+        yes | yay ${yay_options[@]} -S remmina
+        yes | yay ${yay_options[@]} -S freerdp
     fi
 
     # bmap-tools
@@ -335,8 +342,9 @@ function install_packages()
         yes | yay ${yay_options[@]} -S freecad
         yes | yay ${yay_options[@]} -S deluge-gtk
         yes | yay ${yay_options[@]} -S plex-desktop
-        yes | yay ${yay_options[@]} -S youtube-dl
         yes | yay ${yay_options[@]} -S yt-dlp
+        yes | yay ${yay_options[@]} -S yt-dlp-drop-in
+        yes | yay ${yay_options[@]} -S smile
     fi
 
     if [ "$XDG_CURRENT_DESKTOP" = "KDE" ];
@@ -389,6 +397,7 @@ function install_packages()
         yes | yay ${yay_options[@]} -S wine
     fi
 
+    # plocate
     yes | yay ${yay_options[@]} -S plocate
     sudo updatedb
 }
