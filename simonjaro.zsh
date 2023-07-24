@@ -412,6 +412,10 @@ function install_packages()
         yes | yay ${yay_options[@]} -S wine
     fi
 
+    # avahi
+    yes | yay ${yay_options[@]} -S avahi
+    /usr/bin/sudo systemctl enable --now avahi-daemon
+
     # plocate
     yes | yay ${yay_options[@]} -S plocate
     sudo updatedb
