@@ -54,12 +54,18 @@ function install_packages()
 
         yes | yay ${yay_options[@]} -S linux-headers dkms
 
+        yes | yay ${yay_options[@]} -S emacs-nox
+        yes | yay ${yay_options[@]} -S bwm-ng
+        yes | yay ${yay_options[@]} -S caffeine-ng
+        yes | yay ${yay_options[@]} -S zsh
+
+        chsh -s /usr/bin/zsh
+
         if [ ${IS_TUXEDO} -eq 1 ];
         then
             yes | yay ${yay_options[@]} -S tuxedo-keyboard-dkms tuxedo-keyboard-ite-dkms
             yes | yay ${yay_options[@]} -S tuxedo-control-center-bin
             yes | yay ${yay_options[@]} -S tuxedo-touchpad-switch
-            yes | yay ${yay_options[@]} -S tuxedo-plymouth-one
         fi
 
         echo "You should really reboot now"
@@ -107,7 +113,11 @@ function install_packages()
     # theme stuff
     if [ "$XDG_CURRENT_DESKTOP" = "KDE" ];
     then
-        yes | yay ${yay_options[@]} -S kvantum gtk-engine-murrine papirus-icon-theme nord-konsole
+        yes | yay ${yay_options[@]} -S kvantum
+        yes | yay ${yay_options[@]} -S gtk-engine-murrine
+        yes | yay ${yay_options[@]} -S papirus-icon-theme
+        yes | yay ${yay_options[@]} -S nord-konsole
+        yes | yay ${yay_options[@]} -S nordic-wallpapers
 
         # # set the theme
         # /usr/bin/lookandfeeltool -a com.github.varlesh.materia-dark
@@ -167,7 +177,12 @@ function install_packages()
     # btrfs tools
     if sudo btrfs subvolume show / >/dev/null 2>&1 ;
     then
-        yes | yay ${yay_options[@]} -S btrfs-assistant btrfs-heatmap python-btrfs snapper bees btrfsmaintenance
+        yes | yay ${yay_options[@]} -S btrfs-assistant
+        yes | yay ${yay_options[@]} -S btrfs-heatmap
+        yes | yay ${yay_options[@]} -S python-btrfs
+        yes | yay ${yay_options[@]} -S snapper
+        yes | yay ${yay_options[@]} -S bees
+        yes | yay ${yay_options[@]} -S btrfsmaintenance
     fi
 
     # some import starters, separately for risk management purposes
@@ -191,7 +206,6 @@ function install_packages()
     yes | yay ${yay_options[@]} -S unzip
     yes | yay ${yay_options[@]} -S mssql-tools
 
-    chsh -s /usr/bin/zsh
 
     for f in `sudo mhwd-kernel -li | awk 'NR>2 {print $2}'`
     do
@@ -252,7 +266,7 @@ function install_packages()
         # chat
         yes | yay ${yay_options[@]} -S teams
         yes | yay ${yay_options[@]} -S slack-desktop
-        yes | yay ${yay_options[@]} -S ferdium-nightly-bin
+        yes | yay ${yay_options[@]} -S ferdium-bin
         yes | yay ${yay_options[@]} -S pnpm-bin
         yes | yay ${yay_options[@]} -S zoom
 
@@ -282,6 +296,7 @@ function install_packages()
 
         # powerpanel
         yes | yay ${yay_options[@]} -S powerpanel
+        /usr/bin/sudo systemctl enable --now pwrstatd.service
 
         # remote desktop
         yes | yay ${yay_options[@]} -S remmina
@@ -327,11 +342,11 @@ function install_packages()
         # gitkraken
         yes | yay ${yay_options[@]} -S gitkraken
 
-        # gittyup
-        yes | yay ${yay_options[@]} -S gittyup
-
         # meld
         yes | yay ${yay_options[@]} -S meld
+
+        # postman
+        yes | yay ${yay_options[@]} -S postman-bin
     fi
 
     if [ ${MIN_PKGS} -eq 0 ];
