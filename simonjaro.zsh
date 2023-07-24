@@ -505,6 +505,10 @@ EOF
 
 sudo chmod +x /etc/NetworkManager/dispatcher.d/09-timezone
 
+
+ln -s /mnt/hebe/Dropbox ~/Dropbox
+ln -s /mnt/hebe/Nextcloud ~/Nextcloud
+
     if [ ${INSTALL_PKGS} -gt 0 ];
     then
         install_packages
