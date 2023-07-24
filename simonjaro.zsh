@@ -381,6 +381,8 @@ function install_packages()
                                     openjdk-doc openjdk17-doc openjdk11-doc openjdk8-doc \
                                     openjdk-src openjdk17-src openjdk11-src openjdk8-src
 
+    yes | yay ${yay_options[@]} -S maven
+
     yes | yay ${yay_options[@]} -S visualvm
 
 
