@@ -82,9 +82,9 @@ pushd ~
 LAST_SNAPSHOT=`borg list --short --last 1 "${REPO_PATH}"`
 
 echo "Restoring configurations from ${REPO_PATH}::${LAST_SNAPSHOT}..."
-borg --progress extract --strip-components 2 "${REPO_PATH}::${LAST_SNAPSHOT}" home/${USER}/{.histfile,.ssh,.gnupg,.gitconfig,.dotfiles,.local/share/Steam/,.config/touchegg,.config/BraveSoftware/Brave-Browser,.config/Ferdium,.config/superpaper,.config/obsidian,.config/deluge,.config/polybar,.config/Slack,.config/ulauncher,.config/yay,.config/JetBrains,.config/Code,.vscode,.config/remmina,.local/share/remmina,.local/share/ulauncher,.local/share/Vorta,.local/share/plasma/plasmoids.config/1Password}
+borg --progress extract --strip-components 2 "${REPO_PATH}::${LAST_SNAPSHOT}" home/${USER}/{.dotfiles,.gitconfig,.gitkraken,.gnupg,.histfile,.ssh,.vscode,.config/BraveSoftware/Brave-Browser,.config/Code,.config/deluge,.config/Ferdium,.config/GitKraken,.config/JetBrains,.config/obsidian,.config/polybar,.config/remmina,.config/Slack,.config/superpaper,.config/touchegg,.config/ulauncher,.config/yay,.local/share/plasma/plasmoids.config/1Password,.local/share/remmina,.local/share/Steam/,.local/share/ulauncher,.local/share/Vorta}
 
 echo "Restoring files from ${REPO_PATH}::${LAST_SNAPSHOT}..."
-borg --progress extract --strip-components 2 "${REPO_PATH}::${LAST_SNAPSHOT}" home/${USER}/{Desktop,Documents,Music,techsupport,Videos,Downloads,Development,VirtualBox\ VMs,Dropbox}
+borg --progress extract --strip-components 2 "${REPO_PATH}::${LAST_SNAPSHOT}" home/${USER}/{Desktop,Documents,Music,techsupport,Videos,Downloads,Development,VirtualBox\ VMs}
 
 popd
