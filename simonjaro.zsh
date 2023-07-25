@@ -252,8 +252,15 @@ function install_packages()
     if [ $IS_VM -ne 1 ] && [ ${MIN_PKGS} -eq 0 ];
     then
         # docker
-        yes | yay ${yay_options[@]} -S docker docker-buildx
+        yes | yay ${yay_options[@]} -S docker docker-buildx docker-rootless-extras
+        echo | /usr/bin/sudo tee -a /etc/subuid
+        echo "$USER:231072:65536" | /usr/bin/sudo tee -a /etc/subuid
+
+        echo | /usr/bin/sudo tee -a /etc/subgid
+        echo "$USER:231072:65536" | /usr/bin/sudo tee -a /etc/subgid
+
         sudo systemctl enable --now docker
+        systemctl --user enable --now docker.socket
 
         # cloud stuff
         yes | yay ${yay_options[@]} -S python-gpgme # unlisted Dropbox dependency
