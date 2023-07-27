@@ -217,6 +217,8 @@ function install_packages()
     if [ $IS_VM -eq 0 ] && [ ${MIN_PKGS} -eq 0 ]
     then
         yes | yay ${yay_options[@]} -S virtualbox-ext-oracle virtualbox-bin-guest-iso virtualbox-bin
+        /usr/bin/sudo gpasswd -a jsimon vboxusers
+
     fi
 #
 #    # virtualbox + linux kernel headers - DKMS should update after installation in next step
@@ -294,6 +296,8 @@ function install_packages()
 
         # polychromatic
         yes | yay ${yay_options[@]} -S polychromatic
+
+        /usr/bin/sudo gpasswd -a jsimon plugdev
 
         # battop
         yes | yay ${yay_options[@]} -S battop
