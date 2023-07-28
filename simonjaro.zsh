@@ -119,6 +119,7 @@ function install_packages()
         yes | yay ${yay_options[@]} -S papirus-icon-theme
         yes | yay ${yay_options[@]} -S nord-konsole
         yes | yay ${yay_options[@]} -S nordic-wallpapers
+        yes | yay ${yay_options[@]} -S nordic-darker-theme
 
         # # set the theme
         # /usr/bin/lookandfeeltool -a com.github.varlesh.materia-dark
