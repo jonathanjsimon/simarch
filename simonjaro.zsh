@@ -58,6 +58,7 @@ function install_packages()
         yes | yay ${yay_options[@]} -S bwm-ng
         yes | yay ${yay_options[@]} -S caffeine-ng
         yes | yay ${yay_options[@]} -S zsh
+        yes | yay ${yay_options[@]} -S borg python-llfuse
 
         chsh -s /usr/bin/zsh
 
@@ -273,10 +274,12 @@ function install_packages()
         yes | yay ${yay_options[@]} -S spotify
 
         # chat
-        yes | yay ${yay_options[@]} -S teams
         yes | yay ${yay_options[@]} -S slack-desktop
         yes | yay ${yay_options[@]} -S ferdium-bin
-        yes | yay ${yay_options[@]} -S pnpm-bin
+        yes | yay ${yay_options[@]} -S mattermost-desktop
+        # soft mattermost dependency
+        yes | yay ${yay_options[@]} -S trash-cli
+        yes | yay ${yay_options[@]} -S pnpm
         yes | yay ${yay_options[@]} -S zoom
 
         # borg + vorta
@@ -536,6 +539,7 @@ for arg in "$@"
 do
     case "$arg" in
         --stage1pkgs)
+            INSTALL_PKGS=1
             STAGE1=1
         ;;
         --pkgs)
