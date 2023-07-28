@@ -5,6 +5,8 @@
 BORG_RESTORE=0
 REPO_PATH=""
 PASSPHRASE=""
+CONFIG=1
+DATA=1
 
 function binary_exists()
 {
@@ -27,6 +29,14 @@ do
         --borg=*)
             BORG_RESTORE=1
             REPO_PATH="${arg#--borg=}"
+        ;;
+        --configonly)
+            CONFIG=1
+            DATA=0
+        ;;
+        --dataonly)
+            CONFIG=0
+            DATA=1
         ;;
     esac
 done
@@ -81,10 +91,15 @@ pushd ~
 
 LAST_SNAPSHOT=`borg list --short --last 1 "${REPO_PATH}"`
 
-echo "Restoring configurations from ${REPO_PATH}::${LAST_SNAPSHOT}..."
-borg --progress extract --strip-components 2 "${REPO_PATH}::${LAST_SNAPSHOT}" home/${USER}/{.dotfiles,.gitconfig,.gitkraken,.gnupg,.histfile,.ssh,.vscode,.config/BraveSoftware/Brave-Browser,.config/Code,.config/deluge,.config/Ferdium,.config/GitKraken,.config/JetBrains,.config/obsidian,.config/polybar,.config/remmina,.config/Slack,.config/superpaper,.config/touchegg,.config/ulauncher,.config/yay,.local/share/plasma/plasmoids.config/1Password,.local/share/remmina,.local/share/Steam/,.local/share/ulauncher,.local/share/Vorta}
+if [ ${CONFIG} -eq 1 ];
+then
+    echo "Restoring configurations from ${REPO_PATH}::${LAST_SNAPSHOT}..."
+    borg --progress extract --strip-components 2 "${REPO_PATH}::${LAST_SNAPSHOT}" home/${USER}/{.ac_domain_smb_credentials,ac_shares.zsh,.dotfiles,.gitconfig,.gitkraken,.gnupg,.histfile,.ssh,.vscode,.config/BraveSoftware/Brave-Browser,.config/Code,.config/deluge,.config/Ferdium,.config/GitKraken,.config/JetBrains,.config/obsidian,.config/polybar,.config/remmina,.config/Slack,.config/superpaper,.config/touchegg,.config/ulauncher,.config/yay,.local/share/plasma/plasmoids,.config/1Password,.local/share/remmina,.local/share/Steam/,.local/share/ulauncher,.local/share/Vorta}
+fi
 
-echo "Restoring files from ${REPO_PATH}::${LAST_SNAPSHOT}..."
-borg --progress extract --strip-components 2 "${REPO_PATH}::${LAST_SNAPSHOT}" home/${USER}/{Desktop,Documents,Music,techsupport,Videos,Downloads,Development,VirtualBox\ VMs}
-
+if [ ${DATA} -eq 1 ];
+then
+    echo "Restoring files from ${REPO_PATH}::${LAST_SNAPSHOT}..."
+    borg --progress extract --strip-components 2 "${REPO_PATH}::${LAST_SNAPSHOT}" home/${USER}/{Desktop,Documents,Development,Downloads,Music,techsupport,Videos,VirtualBox\ VMs}
+fi
 popd
