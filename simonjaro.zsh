@@ -411,7 +411,7 @@ function install_packages()
     yes | yay ${yay_options[@]} -S speedtest-cli speedtest++
 
     # other utilities
-    yes | yay ${yay_options[@]} -S jq highlight bat ncdu shiny-mirrors bmap-tools
+    yes | yay ${yay_options[@]} -S jq highlight bat ncdu shiny-mirrors bmap-tools screen
 
     # install some npm stuff
     /usr/bin/sudo npm i -g html-minifier uglify-js uglifycss sass jshint
@@ -529,6 +529,7 @@ sudo chmod +x /etc/NetworkManager/dispatcher.d/09-timezone
 
 ln -s /mnt/hebe/Dropbox ~/Dropbox
 ln -s /mnt/hebe/Nextcloud ~/Nextcloud
+ln -s ~/Dropbox/Autonomic/MMS_Logs ~/MMS_Logs
 
     if [ ${INSTALL_PKGS} -gt 0 ];
     then
