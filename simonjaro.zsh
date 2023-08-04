@@ -316,8 +316,8 @@ function install_packages()
         # tailscale + trayscale
         yes | yay ${yay_options[@]} -S tailscale
         /usr/bin/sudo systemctl enable --now tailscaled
-        # commenting this out by default because it take for. ever. to compile the go gtk dependency
-        # yes | yay ${yay_options[@]} -S trayscale
+
+        yes | yay ${yay_options[@]} -S tailscale-systray-git
 
         # solaar
         yes | yay ${yay_options[@]} -S solaar
@@ -467,8 +467,7 @@ function install_packages()
     then
         echo
         echo
-        echo "${boldyellow}Must run \"sudo tailscale up --operator="'$USER'"\"${reset}"
-        echo "${boldyellow}Install trayscale at some point (${reset}${boldgreen}yay -S trayscale${reset}${boldyellow}), long compile${reset}"
+        echo "${boldyellow}Must run \"sudo tailscale up"\"${reset}"
     fi
 }
 
