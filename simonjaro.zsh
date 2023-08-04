@@ -1,5 +1,20 @@
 #!/usr/bin/zsh
 
+
+bold=$(tput bold)
+
+red=$(tput setaf 1)
+green=$(tput setaf 2)
+yellow=$(tput setaf 3)
+blue=$(tput setaf 4)
+
+boldred=${bold}${red}
+boldgreen=${bold}${green}
+boldyellow=${bold}${yellow}
+boldblue=${bold}${blue}
+
+reset=$(tput sgr0)
+
 STAGE1=0
 IS_TUXEDO=0
 INSTALL_PKGS=0
@@ -9,7 +24,6 @@ WINE=0
 
 function binary_exists()
 {
-
     if [ -z "${1}" ]; then
         return 1
     fi
@@ -47,6 +61,7 @@ function install_packages()
 
     if [ ${STAGE1} -eq 1 ]
     then
+        echo "${boldyellow}Installing stage 1 packages${reset}"
         for f in `sudo mhwd-kernel -li | awk 'NR>2 {print $2}'`
         do
             yes | yay ${yay_options[@]} -S ${f}-headers
@@ -60,7 +75,8 @@ function install_packages()
         yes | yay ${yay_options[@]} -S zsh
         yes | yay ${yay_options[@]} -S borg python-llfuse
 
-        chsh -s /usr/bin/zsh
+        echo "${boldgreen}Changing shell to zsh${reset}"
+        /usr/bin/sudo chsh -s /usr/bin/zsh ${USER}
 
         if [ ${IS_TUXEDO} -eq 1 ];
         then
@@ -69,7 +85,7 @@ function install_packages()
             yes | yay ${yay_options[@]} -S tuxedo-touchpad-switch
         fi
 
-        echo "You should really reboot now"
+        echo "${boldred}You should really reboot now${reset}"
 
         exit 0
     fi
@@ -108,6 +124,7 @@ function install_packages()
 
     if [ "$XDG_CURRENT_DESKTOP" = "KDE" ];
     then
+        # fuck baloo
         balooctl disable
     fi
 
@@ -158,6 +175,7 @@ function install_packages()
     if [ ${MIN_PKGS} -eq 0 ] && [ ${PIPEWIRE} -eq 1 ];
     then
         # remove pulse, kate, etc
+        echo "${boldyellow}Replacing pulseaudio with pipewire${reset}"
         yes | yay ${yay_options[@]} -Rdd pulseaudio
         yes | yay ${yay_options[@]} -Rdd pulseaudio-alsa
         yes | yay ${yay_options[@]} -Rdd pulseaudio-bluetooth
@@ -177,8 +195,10 @@ function install_packages()
     fi
 
     # btrfs tools
-    if sudo btrfs subvolume show / >/dev/null 2>&1 ;
+    if /usr/bin/sudo btrfs subvolume show / >/dev/null 2>&1 ;
     then
+        echo "${boldyellow}Installing btrfs packages${reset}"
+
         yes | yay ${yay_options[@]} -S btrfs-assistant
         yes | yay ${yay_options[@]} -S btrfs-heatmap
         yes | yay ${yay_options[@]} -S python-btrfs
@@ -218,9 +238,10 @@ function install_packages()
 
     if [ $IS_VM -eq 0 ] && [ ${MIN_PKGS} -eq 0 ]
     then
+        echo "${boldyellow}Installing virtualbox, must reboot to function${reset}"
+
         yes | yay ${yay_options[@]} -S virtualbox-ext-oracle virtualbox-bin-guest-iso virtualbox-bin
         /usr/bin/sudo gpasswd -a jsimon vboxusers
-
     fi
 #
 #    # virtualbox + linux kernel headers - DKMS should update after installation in next step
@@ -291,6 +312,12 @@ function install_packages()
 
         # protonvpn
         yes | yay ${yay_options[@]} -S protonvpn
+
+        # tailscale + trayscale
+        yes | yay ${yay_options[@]} -S tailscale
+        /usr/bin/sudo systemctl enable --now tailscaled
+        # commenting this out by default because it take for. ever. to compile the go gtk dependency
+        # yes | yay ${yay_options[@]} -S trayscale
 
         # solaar
         yes | yay ${yay_options[@]} -S solaar
@@ -375,6 +402,7 @@ function install_packages()
         yes | yay ${yay_options[@]} -S yt-dlp
         yes | yay ${yay_options[@]} -S yt-dlp-drop-in
         yes | yay ${yay_options[@]} -S smile
+        yes | yay ${yay_options[@]} -S ginkgocadx-bin
     fi
 
     if [ "$XDG_CURRENT_DESKTOP" = "KDE" ];
@@ -403,7 +431,6 @@ function install_packages()
 
     if [ ${MIN_PKGS} -eq 0 ];
     then
-        # installing this separately because it seems to no longer well and I wanted to be able to comment it out
         yes | yay ${yay_options[@]} -S superpaper
     fi
 
@@ -415,7 +442,6 @@ function install_packages()
 
     # install some npm stuff
     /usr/bin/sudo npm i -g html-minifier uglify-js uglifycss sass jshint
-
 
     if [ ${MIN_PKGS} -eq 0 ];
     then
@@ -436,6 +462,14 @@ function install_packages()
     # plocate
     yes | yay ${yay_options[@]} -S plocate
     sudo updatedb
+
+    if binary_exists tailscale;
+    then
+        echo
+        echo
+        echo "${boldyellow}Must run \"sudo tailscale up --operator="'$USER'"\"${reset}"
+        echo "${boldyellow}Install trayscale at some point (${reset}${boldgreen}yay -S trayscale${reset}${boldyellow}), long compile${reset}"
+    fi
 }
 
 function main()
