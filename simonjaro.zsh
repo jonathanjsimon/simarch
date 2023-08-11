@@ -356,6 +356,7 @@ function install_packages()
 
     # touchegg
     yes | yay ${yay_options[@]} -S touchegg
+    yes | yay ${yay_options[@]} -S touche
     sudo systemctl enable touchegg
 
     # archive tool
@@ -438,7 +439,16 @@ function install_packages()
     yes | yay ${yay_options[@]} -S speedtest-cli speedtest++
 
     # other utilities
-    yes | yay ${yay_options[@]} -S jq highlight bat ncdu shiny-mirrors bmap-tools screen
+    yes | yay ${yay_options[@]} -S jq
+    yes | yay ${yay_options[@]} -S highlight
+    yes | yay ${yay_options[@]} -S bat
+    yes | yay ${yay_options[@]} -S ncdu
+    yes | yay ${yay_options[@]} -S shiny-mirrors
+    yes | yay ${yay_options[@]} -S bmap-tools
+    yes | yay ${yay_options[@]} -S screen
+    yes | yay ${yay_options[@]} -S nmap
+    yes | yay ${yay_options[@]} -S vulscan
+
 
     # install some npm stuff
     /usr/bin/sudo npm i -g html-minifier uglify-js uglifycss sass jshint
