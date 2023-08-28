@@ -404,6 +404,7 @@ function install_packages()
         yes | yay ${yay_options[@]} -S yt-dlp-drop-in
         yes | yay ${yay_options[@]} -S smile
         yes | yay ${yay_options[@]} -S ginkgocadx-bin
+        yes | yay ${yay_options[@]} -S inkscape
     fi
 
     if [ "$XDG_CURRENT_DESKTOP" = "KDE" ];
@@ -448,6 +449,7 @@ function install_packages()
     yes | yay ${yay_options[@]} -S screen
     yes | yay ${yay_options[@]} -S nmap
     yes | yay ${yay_options[@]} -S vulscan
+    yes | yay ${yay_options[@]} -S powershell
 
 
     # install some npm stuff
@@ -463,6 +465,7 @@ function install_packages()
     if [ ${WINE} -eq 1 ];
     then
         yes | yay ${yay_options[@]} -S wine
+        yes | yay ${yay_options[@]} -S lib32-gnutls
     fi
 
     # avahi
