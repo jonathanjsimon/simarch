@@ -405,6 +405,7 @@ function install_packages()
         yes | yay ${yay_options[@]} -S smile
         yes | yay ${yay_options[@]} -S ginkgocadx-bin
         yes | yay ${yay_options[@]} -S inkscape
+        yes | yay ${yay_options[@]} -S cheese
     fi
 
     if [ "$XDG_CURRENT_DESKTOP" = "KDE" ];
