@@ -284,7 +284,7 @@ function install_packages()
         echo | /usr/bin/sudo tee -a /etc/subgid
         echo "$USER:231072:65536" | /usr/bin/sudo tee -a /etc/subgid
 
-        sudo systemctl enable --now docker
+        /usr/bin/sudo systemctl enable --now docker
         systemctl --user enable --now docker.socket
 
         # cloud stuff
@@ -357,7 +357,7 @@ function install_packages()
     # touchegg
     yes | yay ${yay_options[@]} -S touchegg
     yes | yay ${yay_options[@]} -S touche
-    sudo systemctl enable touchegg
+    /usr/bin/sudo systemctl enable touchegg
 
     # archive tool
     yes | yay ${yay_options[@]} -S atool
@@ -406,6 +406,9 @@ function install_packages()
         yes | yay ${yay_options[@]} -S ginkgocadx-bin
         yes | yay ${yay_options[@]} -S inkscape
         yes | yay ${yay_options[@]} -S cheese
+        yes | yay ${yay_options[@]} -S chirp-next
+        yes | yay ${yay_options[@]} -S hamradio-menus
+        /usr/bin/sudo usermod -a -G uucp jsimon
     fi
 
     if [ "$XDG_CURRENT_DESKTOP" = "KDE" ];
@@ -475,13 +478,13 @@ function install_packages()
 
     # plocate
     yes | yay ${yay_options[@]} -S plocate
-    sudo updatedb
+    /usr/bin/sudo updatedb
 
     if binary_exists tailscale;
     then
         echo
         echo
-        echo "${boldyellow}Must run \"sudo tailscale up"\"${reset}"
+        echo "${boldyellow}Must run \"sudo tailscale up\"${reset}"
     fi
 }
 
@@ -489,7 +492,7 @@ function main()
 {
     pushd ~
 
-    while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
+    while true; do /usr/bin/sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
 
     # Configure pamac and pacman now so we can install dependencies
     /usr/bin/sudo perl -p -i -e 's/^.UseSyslog/UseSyslog/g; s/^.Color/Color/g; s/^.TotalDownload/TotalDownload/g; s/^.ParallelDownloads.*/ParallelDownloads = 10/g;' /etc/pacman.conf
