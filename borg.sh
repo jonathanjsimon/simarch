@@ -69,7 +69,7 @@ then
 
         while [ -z "${PASSPHRASE}" ];
         do
-            read "PASSPHRASE?Repo passphrase (${REPO_PATH}): "
+            read -s "PASSPHRASE?Repo passphrase (${REPO_PATH}): "
             if [ -n "${PASSPHRASE}" ];
             then
                 export BORG_PASSPHRASE="${PASSPHRASE}"
