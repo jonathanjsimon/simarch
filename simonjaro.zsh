@@ -171,6 +171,9 @@ function install_packages()
     if [ "$XDG_CURRENT_DESKTOP" = "KDE" ];
     then
         yes | yay ${yay_options[@]} -S plasma5-applets-thermal-monitor
+        yes | yay ${yay_options[@]} -S lib32-lm_sensors
+        yes | yay ${yay_options[@]} -S lm_sensors
+        yes | yay ${yay_options[@]} -S qt5-sensors
         # replace kate with kwrite
         yes | yay ${yay_options[@]} -Rdd kate
         yes | yay ${yay_options[@]} -S kwrite
