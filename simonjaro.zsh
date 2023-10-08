@@ -55,22 +55,27 @@ function install_packages()
     # ${yay_options[@]}
 
     # get that rust, needed for some other packages + yay + python
-    /usr/bin/sudo pamac install  --no-confirm rustup gdb lldb yay base-devel python python-pip ipython
+#     /usr/bin/sudo pamac install  --no-confirm rustup gdb lldb yay base-devel python python-pip ipython
+    /usr/bin/sudo pacman -Syuu --noconfirm rustup gdb lldb yay base-devel python python-pip ipython
     rustup toolchain install stable
     rustup target add i686-unknown-linux-gnu
 
     if [ ${STAGE1} -eq 1 ]
     then
         echo "${boldyellow}Installing stage 1 packages${reset}"
-        for f in `sudo mhwd-kernel -li | awk 'NR>2 {print $2}'`
-        do
-            yes | yay ${yay_options[@]} -S ${f}-headers
-        done
+        if binary_exists mhwd-kernel;
+        then
+            for f in `sudo mhwd-kernel -li | awk 'NR>2 {print $2}'`
+            do
+                yes | yay ${yay_options[@]} -S ${f}-headers
+            done
+        fi
 
         yes | yay ${yay_options[@]} -S linux-headers dkms
 
         yes | yay ${yay_options[@]} -S emacs-nox
         yes | yay ${yay_options[@]} -S bwm-ng
+        yes | yay ${yay_options[@]} -S eza
         yes | yay ${yay_options[@]} -S caffeine-ng
         yes | yay ${yay_options[@]} -S zsh
         yes | yay ${yay_options[@]} -S borg python-llfuse
@@ -137,10 +142,11 @@ function install_packages()
         yes | yay ${yay_options[@]} -S nord-konsole
         yes | yay ${yay_options[@]} -S nordic-wallpapers
         yes | yay ${yay_options[@]} -S nordic-darker-theme
+        yes | yay ${yay_options[@]} -S kvantum-theme-nordic-git
 
         # # set the theme
         # /usr/bin/lookandfeeltool -a com.github.varlesh.materia-dark
-        # kvantummanager --set MateriaDark
+        kvantummanager --set Nordic-Darker
         # /usr/bin/sudo wget -O /usr/share/konsole/base16-tomorrow-night.colorscheme https://raw.githubusercontent.com/cskeeters/base16-konsole/master/colorscheme/base16-tomorrow-night.colorscheme
     fi
 
@@ -164,12 +170,14 @@ function install_packages()
 
     if [ "$XDG_CURRENT_DESKTOP" = "KDE" ];
     then
+        yes | yay ${yay_options[@]} -S plasma5-applets-thermal-monitor
         # replace kate with kwrite
         yes | yay ${yay_options[@]} -Rdd kate
         yes | yay ${yay_options[@]} -S kwrite
 
         # kgpg
         yes | yay ${yay_options[@]} -S kgpg
+        yes | yay ${yay_options[@]} -S kwalletmanager
     fi
 
     if [ ${MIN_PKGS} -eq 0 ] && [ ${PIPEWIRE} -eq 1 ];
@@ -187,10 +195,10 @@ function install_packages()
          # install pipewire
         yes | yay ${yay_options[@]} -S manjaro-pipewire wireplumber phonon-qt5-gstreamer gst-plugin-pipewire pipewire-jack easyeffects pipewire-x11-bell realtime-privileges xdg-desktop-portal-gtk
 
-	# only install kde stuffs if on kde
-	if [ "$XDG_CURRENT_DESKTOP" = "KDE" ];
-	then
-	    yes | yay ${yay_options[@]} -S plasma-pa xdg-desktop-portal-kde
+        # only install kde stuffs if on kde
+        if [ "$XDG_CURRENT_DESKTOP" = "KDE" ];
+        then
+            yes | yay ${yay_options[@]} -S plasma-pa xdg-desktop-portal-kde
         fi
     fi
 
@@ -224,15 +232,9 @@ function install_packages()
     yes | yay ${yay_options[@]} -S btop
     yes | yay ${yay_options[@]} -S bwm-ng
     yes | yay ${yay_options[@]} -S aria2
-    yes | yay ${yay_options[@]} -S exa
+    yes | yay ${yay_options[@]} -S eza
     yes | yay ${yay_options[@]} -S unzip
     yes | yay ${yay_options[@]} -S mssql-tools
-
-
-    for f in `sudo mhwd-kernel -li | awk 'NR>2 {print $2}'`
-    do
-        yes | yay ${yay_options[@]} -S ${f}-headers
-    done
 
     yes | yay ${yay_options[@]} -S linux-headers dkms
 
@@ -243,23 +245,6 @@ function install_packages()
         yes | yay ${yay_options[@]} -S virtualbox-ext-oracle virtualbox-bin-guest-iso virtualbox-bin
         /usr/bin/sudo gpasswd -a jsimon vboxusers
     fi
-#
-#    # virtualbox + linux kernel headers - DKMS should update after installation in next step
-#    if [ $IS_VM -eq 1 ];
-#    then
-#        target_kernel_headers=$(for f in `mhwd-kernel -li | awk 'NR>2 {print $2}'`; do pkgnamebase=`basename "${f%.*}"`; echo "${pkgnamebase}-headers"; done | paste -sd ' ')
-#        target_kernel_headers_array=("${(@s/ /)target_kernel_headers}")
-#        yes | yay ${yay_options[@]} -S virtualbox-guest-utils ${target_kernel_headers_array[@]}
-#    elif [ ${MIN_PKGS} -eq 0 ];
-#    then
-#        target_kernel_headers=$(for f in `mhwd-kernel -li | awk 'NR>2 {print $2}'`; do pkgnamebase=`basename "${f%.*}"`; echo "${pkgnamebase}-headers ${pkgnamebase}-virtualbox-host-modules"; done | paste -sd ' ')
-#        target_kernel_headers_array=("${(@s/ /)target_kernel_headers}")
-#        yes | yay ${yay_options[@]} -S virtualbox virtualbox-guest-iso virtualbox-ext-oracle ${target_kernel_headers_array[@]}
-#    fi
-#
-#    # for some reason, linux414 headers get installed
-#    yes | yay ${yay_options[@]} -Rdd linux414-headers
-#    yes | yay ${yay_options[@]} -Rdd linux414-virtualbox-host-modules
 
     # gnome-keyring
     yes | yay ${yay_options[@]} -S libgnome-keyring
