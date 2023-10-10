@@ -237,7 +237,9 @@ function install_packages()
     yes | yay ${yay_options[@]} -S emacs-nox
     yes | yay ${yay_options[@]} -S gnome-keyring
     yes | yay ${yay_options[@]} -S brave-browser && \
-        xdg-settings set default-web-browser brave.desktop
+        xdg-settings set default-web-browser brave.desktop && \
+        xdg-mime default brave-browser.desktop x-scheme-handler/https && \
+        xdg-mime default brave-browser.desktop x-scheme-handler/http
     yes | yay ${yay_options[@]} -S git
     yes | yay ${yay_options[@]} -S git-lfs
     yes | yay ${yay_options[@]} -S gitflow-avh
