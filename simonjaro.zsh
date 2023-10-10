@@ -17,6 +17,7 @@ reset=$(tput sgr0)
 
 STAGE1=0
 IS_TUXEDO=0
+IS_ENDEAVOUR=0
 INSTALL_PKGS=0
 MIN_PKGS=0
 PIPEWIRE=0
@@ -49,6 +50,11 @@ function install_packages()
             IS_TUXEDO=1
         ;;
     esac
+
+    if [ "$(</etc/issue)" == *EndeavourOS* ];
+    then
+        IS_ENDEAVOUR=1
+    fi
 
 
     yay_options=("--useask" "--sudoloop" "--nocleanmenu" "--nodiffmenu" "--noconfirm")
@@ -181,6 +187,12 @@ function install_packages()
         # kgpg
         yes | yay ${yay_options[@]} -S kgpg
         yes | yay ${yay_options[@]} -S kwalletmanager
+
+        if [ ${IS_ENDEAVOUR} -gt 0 ];
+        then
+            # kde addons
+            yes | yay ${yay_options[@]} -S kdeplasma-addons
+        fi
     fi
 
     if [ ${MIN_PKGS} -eq 0 ] && [ ${PIPEWIRE} -eq 1 ];
@@ -224,7 +236,8 @@ function install_packages()
     yes | yay ${yay_options[@]} -S opendoas
     yes | yay ${yay_options[@]} -S emacs-nox
     yes | yay ${yay_options[@]} -S gnome-keyring
-    yes | yay ${yay_options[@]} -S brave-browser
+    yes | yay ${yay_options[@]} -S brave-browser && \
+        xdg-settings set default-web-browser brave.desktop
     yes | yay ${yay_options[@]} -S git
     yes | yay ${yay_options[@]} -S git-lfs
     yes | yay ${yay_options[@]} -S gitflow-avh
@@ -335,6 +348,9 @@ function install_packages()
 
     # bmap-tools
     yes | yay ${yay_options[@]} -S bmap-tools
+
+    # ventoy
+    yes | yay ${yay_options[@]} -S ventoy
 
     # pigz
     yes | yay ${yay_options[@]} -S pigz
@@ -467,6 +483,7 @@ function install_packages()
     # plocate
     yes | yay ${yay_options[@]} -S plocate
     /usr/bin/sudo updatedb
+    /usr/bin/sudo systemctl enable --now plocate-updatedb.timer
 
     if binary_exists tailscale;
     then
@@ -562,12 +579,17 @@ case "$2" in
 esac
 EOF
 
-sudo chmod +x /etc/NetworkManager/dispatcher.d/09-timezone
+    /usr/bin/sudo chmod +x /etc/NetworkManager/dispatcher.d/09-timezone
 
 
-ln -s /mnt/hebe/Dropbox ~/Dropbox
-ln -s /mnt/hebe/Nextcloud ~/Nextcloud
-ln -s ~/Dropbox/Autonomic/MMS_Logs ~/MMS_Logs
+    ln -s /mnt/hebe/Dropbox ~/Dropbox
+    ln -s /mnt/hebe/Nextcloud ~/Nextcloud
+    ln -s ~/Dropbox/Autonomic/MMS_Logs ~/MMS_Logs
+
+    if [ ${IS_ENDEAVOUR} -gt 0 ];
+    then
+        /usr/bin/sudo systemctl enable --now bluetooth
+    fi
 
     if [ ${INSTALL_PKGS} -gt 0 ];
     then
