@@ -293,6 +293,10 @@ function install_packages()
         # cloud stuff
         yes | yay ${yay_options[@]} -S python-gpgme # unlisted Dropbox dependency
         yes | yay ${yay_options[@]} -S dropbox
+        if [ "$XDG_CURRENT_DESKTOP" = "KDE" ];
+        then
+            yes | yay ${yay_options[@]} -S dolphin-plugins
+        fi
         yes | yay ${yay_options[@]} -S nextcloud-client
 
         # spotify AUR installer fails sometimes
