@@ -587,10 +587,17 @@ EOF
 
     /usr/bin/sudo chmod +x /etc/NetworkManager/dispatcher.d/09-timezone
 
+    if [[ ! -L ~/Dropbox ]]; then
+        ln -s /mnt/hebe/Dropbox ~/Dropbox
+    fi
 
-    ln -s /mnt/hebe/Dropbox ~/Dropbox
-    ln -s /mnt/hebe/Nextcloud ~/Nextcloud
-    ln -s ~/Dropbox/Autonomic/MMS_Logs ~/MMS_Logs
+    if [[ ! -L ~/Nextcloud ]]; then
+        ln -s /mnt/hebe/Nextcloud ~/Nextcloud
+    fi
+
+    if [[ ! -L ~/MMS_Logs ]]; then
+        ln -s ~/Dropbox/Autonomic/MMS_Logs ~/MMS_Logs
+    fi
 
     if [ ${IS_ENDEAVOUR} -gt 0 ];
     then
