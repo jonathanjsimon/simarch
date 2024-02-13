@@ -18,8 +18,10 @@ reset=$(tput sgr0)
 STAGE1=0
 IS_TUXEDO=0
 IS_ENDEAVOUR=0
+IS_LAPTOP=0
 INSTALL_PKGS=0
 MIN_PKGS=0
+EXTRA_PKGS=0
 PIPEWIRE=0
 WINE=0
 
@@ -39,6 +41,12 @@ function binary_exists()
 
 function install_packages()
 {
+    yay_options=("--useask" "--sudoloop" "--cleanmenu=false" "--diffmenu=false" "--noconfirm")
+    # ${yay_options[@]}
+
+    # let's bootstrap basics and do the rest with yay
+    /usr/bin/sudo pacman -Syuu --noconfirm rustup gdb lldb yay base-devel python python-pip ipython dmidecode
+
     MANUFACTURER="$(sudo dmidecode -s system-manufacturer)"
     IS_VM=0
 
@@ -51,18 +59,25 @@ function install_packages()
         ;;
     esac
 
-    if [ "$(</etc/issue)" == *EndeavourOS* ];
-    then
-        IS_ENDEAVOUR=1
-    fi
+    source /etc/os-release
 
+    case "$ID" in
+        "EndeavourOS")
+            IS_ENDEAVOUR=1
+        ;;
+    esac
 
-    yay_options=("--useask" "--sudoloop" "--nocleanmenu" "--nodiffmenu" "--noconfirm")
-    # ${yay_options[@]}
+    CHASSISTYPE=$(sudo dmidecode -s chassis-type)
 
-    # get that rust, needed for some other packages + yay + python
-#     /usr/bin/sudo pamac install  --no-confirm rustup gdb lldb yay base-devel python python-pip ipython
-    /usr/bin/sudo pacman -Syuu --noconfirm rustup gdb lldb yay base-devel python python-pip ipython
+    case "${CHASSISTYPE}" in
+        "Notebook")
+            IS_LAPTOP=1
+        ;;
+    esac
+
+    # configure yay?
+    /usr/bin/yay --save
+
     rustup toolchain install stable
     rustup target add i686-unknown-linux-gnu
 
@@ -93,7 +108,10 @@ function install_packages()
         then
             yes | yay ${yay_options[@]} -S tuxedo-keyboard-dkms tuxedo-keyboard-ite-dkms
             yes | yay ${yay_options[@]} -S tuxedo-control-center-bin
-            yes | yay ${yay_options[@]} -S tuxedo-touchpad-switch
+            if [ ${IS_LAPTOP} -eq 1 ];
+            then
+                yes | yay ${yay_options[@]} -S tuxedo-touchpad-switch
+            fi
         fi
 
         echo "${boldred}You should really reboot now${reset}"
@@ -171,7 +189,10 @@ function install_packages()
         yes | yay ${yay_options[@]} -S ttf-iosevka-nerd
         yes | yay ${yay_options[@]} -S ttf-font-awesome
         yes | yay ${yay_options[@]} -S otf-font-awesome
-        yes | yay ${yay_options[@]} -S polybar
+        if [ ${EXTRA_PKGS} -eq 1 ];
+        then
+            yes | yay ${yay_options[@]} -S polybar
+        fi
     fi
 
     if [ "$XDG_CURRENT_DESKTOP" = "KDE" ];
@@ -195,7 +216,7 @@ function install_packages()
         fi
     fi
 
-    if [ ${MIN_PKGS} -eq 0 ] && [ ${PIPEWIRE} -eq 1 ];
+    if [ ${MIN_PKGS} -eq 0 ] && [ ${PIPEWIRE} -eq 1 ] && [ ! binary_exists pipewire ];
     then
         # remove pulse, kate, etc
         echo "${boldyellow}Replacing pulseaudio with pipewire${reset}"
@@ -208,7 +229,7 @@ function install_packages()
         yes | yay ${yay_options[@]} -Rdd jack2
 
          # install pipewire
-        yes | yay ${yay_options[@]} -S manjaro-pipewire wireplumber phonon-qt5-gstreamer gst-plugin-pipewire pipewire-jack easyeffects pipewire-x11-bell realtime-privileges xdg-desktop-portal-gtk
+        yes | yay ${yay_options[@]} -So manjaro-pipewire wireplumber phonon-qt5-gstreamer gst-plugin-pipewire pipewire-jack easyeffects pipewire-x11-bell realtime-privileges xdg-desktop-portal-gtk
 
         # only install kde stuffs if on kde
         if [ "$XDG_CURRENT_DESKTOP" = "KDE" ];
@@ -236,10 +257,19 @@ function install_packages()
     yes | yay ${yay_options[@]} -S opendoas
     yes | yay ${yay_options[@]} -S emacs-nox
     yes | yay ${yay_options[@]} -S gnome-keyring
-    yes | yay ${yay_options[@]} -S brave-browser && \
+
+    brave_pkg_name="brave-browser"
+    if [ ${IS_ENDEAVOUR} -gt 0 ];
+    then
+        brave_pkg_name="brave-bin"
+    fi
+
+    yes | yay ${yay_options[@]} -S ${brave_pkg_name} && \
         xdg-settings set default-web-browser brave.desktop && \
         xdg-mime default brave-browser.desktop x-scheme-handler/https && \
         xdg-mime default brave-browser.desktop x-scheme-handler/http
+
+    yes | yay ${yay_options[@]} -S betterbird-bin
     yes | yay ${yay_options[@]} -S git
     yes | yay ${yay_options[@]} -S git-lfs
     yes | yay ${yay_options[@]} -S gitflow-avh
@@ -247,7 +277,7 @@ function install_packages()
     yes | yay ${yay_options[@]} -S bc
     yes | yay ${yay_options[@]} -S zsh
     yes | yay ${yay_options[@]} -S htop
-    yes | yay ${yay_options[@]} -S btop
+    yes | yay ${yay_options[@]} -S btop-git
     yes | yay ${yay_options[@]} -S bwm-ng
     yes | yay ${yay_options[@]} -S aria2
     yes | yay ${yay_options[@]} -S eza
@@ -277,7 +307,7 @@ function install_packages()
         systemctl --user enable ulauncher.service
     fi
 
-    if [ $IS_VM -ne 1 ] && [ ${MIN_PKGS} -eq 0 ];
+    if [ ${EXTRA_PKGS} -eq 1 ];
     then
         # docker
         yes | yay ${yay_options[@]} -S docker docker-buildx docker-rootless-extras
@@ -289,7 +319,10 @@ function install_packages()
 
         /usr/bin/sudo systemctl enable --now docker
         systemctl --user enable --now docker.socket
+    fi
 
+    if [ $IS_VM -ne 1 ] && [ ${MIN_PKGS} -eq 0 ];
+    then
         # cloud stuff
         yes | yay ${yay_options[@]} -S python-gpgme # unlisted Dropbox dependency
         yes | yay ${yay_options[@]} -S dropbox
@@ -312,7 +345,8 @@ function install_packages()
         yes | yay ${yay_options[@]} -S zoom
 
         # borg + vorta
-        yes | yay ${yay_options[@]} -S borg vorta
+        yes | yay ${yay_options[@]} -S borg
+        yes | yay ${yay_options[@]} -S vorta
 
         # password manager
         yes | yay ${yay_options[@]} -S 1password
@@ -320,11 +354,11 @@ function install_packages()
         # protonvpn
         yes | yay ${yay_options[@]} -S protonvpn
 
-        # tailscale + trayscale
+        # tailscale + ktailctl
         yes | yay ${yay_options[@]} -S tailscale
         /usr/bin/sudo systemctl enable --now tailscaled
 
-        yes | yay ${yay_options[@]} -S tailscale-systray-git
+        yes | yay ${yay_options[@]} -S ktailctl
 
         # solaar
         yes | yay ${yay_options[@]} -S solaar
@@ -364,10 +398,13 @@ function install_packages()
     # hdparm
     yes | yay ${yay_options[@]} -S hdparm
 
-    # touchegg
-    yes | yay ${yay_options[@]} -S touchegg
-    yes | yay ${yay_options[@]} -S touche
-    /usr/bin/sudo systemctl enable touchegg
+    if [ ${IS_LAPTOP} -eq 1 ];
+    then
+        # touchegg
+        yes | yay ${yay_options[@]} -S touchegg
+        yes | yay ${yay_options[@]} -S touche
+        /usr/bin/sudo systemctl enable touchegg
+    fi
 
     # archive tool
     yes | yay ${yay_options[@]} -S atool
@@ -376,7 +413,8 @@ function install_packages()
     yes | yay ${yay_options[@]} -S srm
 
     # subversion + git
-    yes | yay ${yay_options[@]} -S git subversion
+    yes | yay ${yay_options[@]} -S subversion
+    yes | yay ${yay_options[@]} -S git
 
     # thefuck
     yes | yay ${yay_options[@]} -S thefuck
@@ -406,16 +444,20 @@ function install_packages()
     then
         # misc
         yes | yay ${yay_options[@]} -S obsidian
-        yes | yay ${yay_options[@]} -S todoist-appimage
+        # todoist appimage sucks
+        yes | yay ${yay_options[@]} -S planify
         yes | yay ${yay_options[@]} -S freecad
-        yes | yay ${yay_options[@]} -S deluge-gtk
-        yes | yay ${yay_options[@]} -S plex-desktop
         yes | yay ${yay_options[@]} -S yt-dlp
         yes | yay ${yay_options[@]} -S yt-dlp-drop-in
         yes | yay ${yay_options[@]} -S smile
-        yes | yay ${yay_options[@]} -S ginkgocadx-bin
         yes | yay ${yay_options[@]} -S inkscape
         yes | yay ${yay_options[@]} -S cheese
+    fi
+
+    if [ ${EXTRA_PKGS} -eq 1 ];
+    then
+        yes | yay ${yay_options[@]} -S ginkgocadx-bin
+        yes | yay ${yay_options[@]} -S deluge-gtk
         yes | yay ${yay_options[@]} -S chirp-next
         yes | yay ${yay_options[@]} -S hamradio-menus
         /usr/bin/sudo usermod -a -G uucp jsimon
@@ -430,10 +472,11 @@ function install_packages()
     yes | yay ${yay_options[@]} -S baobab npm
 
     # dotnet core
-    yes | yay ${yay_options[@]} -S dotnet-host dotnet-runtime dotnet-runtime-3.1 dotnet-sdk \
-                                dotnet-sdk-3.1 dotnet-targeting-pack dotnet-targeting-pack-3.1 aspnet-runtime \
-                                aspnet-runtime-3.1 aspnet-targeting-pack aspnet-targeting-pack-3.1 \
-                                dotnet-sdk-6.0 dotnet-runtime-6.0 aspnet-targeting-pack-6.0 aspnet-runtime-6.0
+    yes | yay ${yay_options[@]} -S aspnet-runtime aspnet-runtime-3.1 aspnet-runtime-7.0 \
+                                    aspnet-targeting-pack aspnet-targeting-pack-3.1 aspnet-targeting-pack-6.0 aspnet-targeting-pack-7.0 \
+                                    dotnet-host dotnet-runtime dotnet-runtime-3.1 dotnet-runtime-6.0 dotnet-runtime-7.0 \
+                                    dotnet-sdk dotnet-sdk-3.1 dotnet-sdk-6.0 dotnet-sdk-7.0 \
+                                    dotnet-targeting-pack dotnet-targeting-pack-3.1 dotnet-targeting-pack-6.0 dotnet-targeting-pack-7.0
 
     # java
     yes | yay ${yay_options[@]} -S jdk-openjdk jrd17-openjdk jrd11-openjdk jrd8-openjdk \
@@ -487,6 +530,7 @@ function install_packages()
     /usr/bin/sudo systemctl enable --now avahi-daemon
 
     # plocate
+    yes | yay ${yay_options[@]} -R mlocate
     yes | yay ${yay_options[@]} -S plocate
     /usr/bin/sudo updatedb
     /usr/bin/sudo systemctl enable --now plocate-updatedb.timer
@@ -495,7 +539,7 @@ function install_packages()
     then
         echo
         echo
-        echo "${boldyellow}Must run \"sudo tailscale up\"${reset}"
+        echo "${boldyellow}Must run \"sudo tailscale up --operator=${USER}\"${reset}"
     fi
 }
 
@@ -623,6 +667,11 @@ do
         --minpkgs)
             INSTALL_PKGS=1
             MIN_PKGS=1
+        ;;
+        --extrapkgs)
+            EXTRA_PKGS=1
+            MIN_PKGS=0
+            INSTALL_PKGS=1
         ;;
         --pipewire)
             PIPEWIRE=1
