@@ -122,6 +122,10 @@ function install_packages()
     # get caffeine installed early
     yes | yay ${yay_options[@]} -S caffeine-ng
 
+    # octopi
+    yes | yay ${yay_options[@]} -S octopi
+    yes | yay ${yay_options[@]} -S octopi-notifier-frameworks
+
     # ranger + atool + supporting utilities
     yes | yay ${yay_options[@]} -S ranger
     yes | yay ${yay_options[@]} -S atool
