@@ -484,7 +484,7 @@ function install_packages()
                                     dotnet-targeting-pack dotnet-targeting-pack-3.1 dotnet-targeting-pack-6.0 dotnet-targeting-pack-7.0
 
     # java
-    yes | yay ${yay_options[@]} -S jdk-openjdk jrd17-openjdk jrd11-openjdk jrd8-openjdk \
+    yes | yay ${yay_options[@]} -S jdk-openjdk jre17-openjdk jre11-openjdk jre8-openjdk \
                                     openjdk-doc openjdk17-doc openjdk11-doc openjdk8-doc \
                                     openjdk-src openjdk17-src openjdk11-src openjdk8-src
 
