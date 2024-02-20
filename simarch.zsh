@@ -24,6 +24,7 @@ MIN_PKGS=0
 EXTRA_PKGS=0
 PIPEWIRE=0
 WINE=0
+STORAGEROOT="/mnt/storage/"
 
 function binary_exists()
 {
@@ -636,11 +637,11 @@ EOF
     /usr/bin/sudo chmod +x /etc/NetworkManager/dispatcher.d/09-timezone
 
     if [[ ! -L ~/Dropbox ]]; then
-        ln -s /mnt/hebe/Dropbox ~/Dropbox
+        ln -s ${STORAGEROOT}Dropbox ~/Dropbox
     fi
 
     if [[ ! -L ~/Nextcloud ]]; then
-        ln -s /mnt/hebe/Nextcloud ~/Nextcloud
+        ln -s ${STORAGEROOT}Nextcloud ~/Nextcloud
     fi
 
     if [[ ! -L ~/MMS_Logs ]]; then
@@ -682,6 +683,9 @@ do
         ;;
         --wine)
             WINE=1
+        ;;
+        --storage=*)
+            STORAGEROOT="${arg#--storage=}"
         ;;
     esac
 done
