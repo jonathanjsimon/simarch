@@ -106,7 +106,7 @@ function install_packages()
 
         if [ ${IS_TUXEDO} -eq 1 ];
         then
-            yes | yay ${yay_options[@]} -S tuxedo-keyboard-dkms tuxedo-keyboard-ite-dkms
+            yes | yay ${yay_options[@]} -S tuxedo-drivers-dkms
             yes | yay ${yay_options[@]} -S tuxedo-control-center-bin
             if [ ${IS_LAPTOP} -eq 1 ];
             then
