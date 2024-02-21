@@ -476,6 +476,12 @@ function install_packages()
 
     if [ "$XDG_CURRENT_DESKTOP" = "KDE" ];
     then
+        if [ ${IS_ENDEAVOUR} -gt 0 ];
+        then
+            # soft dependency of discover
+            yes | yay ${yay_options[@]} -S packagekit-qt5
+        fi
+
         yes | yay ${yay_options[@]} -S discover
     fi
 
