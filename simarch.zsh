@@ -234,13 +234,19 @@ function install_packages()
         yes | yay ${yay_options[@]} -Rdd jack2
 
          # install pipewire
-        yes | yay ${yay_options[@]} -So manjaro-pipewire wireplumber phonon-qt5-gstreamer gst-plugin-pipewire pipewire-jack easyeffects pipewire-x11-bell realtime-privileges xdg-desktop-portal-gtk
+        yes | yay ${yay_options[@]} -So manjaro-pipewire wireplumber phonon-qt5-gstreamer gst-plugin-pipewire pipewire-jack easyeffects pipewire-x11-bell realtime-privileges
 
         # only install kde stuffs if on kde
         if [ "$XDG_CURRENT_DESKTOP" = "KDE" ];
         then
-            yes | yay ${yay_options[@]} -S plasma-pa xdg-desktop-portal-kde
+            yes | yay ${yay_options[@]} -S plasma-pa
         fi
+    fi
+
+    if [ "$XDG_CURRENT_DESKTOP" = "KDE" ];
+    then
+	yes | yay ${yay_options[@]} -S xdg-desktop-portal xdg-desktop-portal-kde
+	# xdg-desktop-portal-gtk
     fi
 
     # btrfs tools
