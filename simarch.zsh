@@ -558,6 +558,8 @@ function install_packages()
         echo
         echo "${boldyellow}Must run \"sudo tailscale up --operator=${USER}\"${reset}"
     fi
+
+    yes | yay ${yay_options[@]} -S pacman-log-orphans-hook
 }
 
 function main()
