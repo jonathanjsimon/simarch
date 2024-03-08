@@ -100,6 +100,7 @@ function install_packages()
         yes | yay ${yay_options[@]} -S eza
         yes | yay ${yay_options[@]} -S caffeine-ng
         yes | yay ${yay_options[@]} -S zsh
+        yes | yay ${yay_options[@]} -S zoxide
         yes | yay ${yay_options[@]} -S borg python-llfuse
 
         echo "${boldgreen}Changing shell to zsh${reset}"
@@ -456,7 +457,7 @@ function install_packages()
         # misc
         yes | yay ${yay_options[@]} -S obsidian
         # todoist appimage sucks
-        yes | yay ${yay_options[@]} -S planify
+        # yes | yay ${yay_options[@]} -S planify
         yes | yay ${yay_options[@]} -S freecad
         yes | yay ${yay_options[@]} -S yt-dlp
         yes | yay ${yay_options[@]} -S yt-dlp-drop-in
@@ -524,7 +525,6 @@ function install_packages()
     yes | yay ${yay_options[@]} -S nmap
     yes | yay ${yay_options[@]} -S vulscan
     yes | yay ${yay_options[@]} -S powershell
-
 
     # install some npm stuff
     /usr/bin/sudo npm i -g html-minifier uglify-js uglifycss sass jshint
