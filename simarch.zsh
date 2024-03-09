@@ -26,6 +26,8 @@ PIPEWIRE=0
 WINE=0
 STORAGEROOT="/mnt/storage/"
 
+PLASMAVERSION=0
+
 function binary_exists()
 {
     if [ -z "${1}" ]; then
@@ -157,15 +159,15 @@ function install_packages()
     yes | yay ${yay_options[@]} -S unzip
     yes | yay ${yay_options[@]} -S zstd
 
-    if [ "$XDG_CURRENT_DESKTOP" = "KDE" ];
-    then
-        # fuck baloo
-        balooctl disable
-    fi
-
     # theme stuff
     if [ "$XDG_CURRENT_DESKTOP" = "KDE" ];
     then
+
+        PLASMAVERSION=$(plasmashell --version | awk '{print $2}' | awk -F '.' '{print $1}')
+
+        # fuck baloo, use plocate
+        balooctl disable
+
         yes | yay ${yay_options[@]} -S kvantum
         yes | yay ${yay_options[@]} -S gtk-engine-murrine
         yes | yay ${yay_options[@]} -S papirus-icon-theme
@@ -203,10 +205,16 @@ function install_packages()
 
     if [ "$XDG_CURRENT_DESKTOP" = "KDE" ];
     then
-        yes | yay ${yay_options[@]} -S plasma5-applets-thermal-monitor
+        yes | yay ${yay_options[@]} -S plasma${PLASMAVERSION}-applets-thermal-monitor
         yes | yay ${yay_options[@]} -S lib32-lm_sensors
         yes | yay ${yay_options[@]} -S lm_sensors
         yes | yay ${yay_options[@]} -S qt5-sensors
+
+        if [ ${PLASMAVERSION} -eq 6 ];
+        then
+            yes | yay ${yay_options[@]} -S qt6-sensors
+        fi
+
         # replace kate with kwrite
         yes | yay ${yay_options[@]} -Rdd kate
         yes | yay ${yay_options[@]} -S kwrite
@@ -481,13 +489,21 @@ function install_packages()
         then
             # soft dependency of discover
             yes | yay ${yay_options[@]} -S packagekit-qt5
+
+            if [ ${PLASMAVERSION} -eq 6 ];
+            then
+                yes | yay ${yay_options[@]} -S qt6-sensors
+            fi
         fi
 
         yes | yay ${yay_options[@]} -S discover
     fi
 
     # misc
-    yes | yay ${yay_options[@]} -S baobab npm
+    yes | yay ${yay_options[@]} -S baobab
+    yes | yay ${yay_options[@]} -S kdiskmark
+
+    yes | yay ${yay_options[@]} -S npm
 
     # dotnet core
     yes | yay ${yay_options[@]} -S aspnet-runtime aspnet-runtime-3.1 aspnet-runtime-7.0 \
