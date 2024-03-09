@@ -202,6 +202,7 @@ function install_packages()
             yes | yay ${yay_options[@]} -S polybar
         fi
         yes | yay ${yay_options[@]} -S coolercontrol
+        yes | yay ${yay_options[@]} -S openrgb
     fi
 
 
