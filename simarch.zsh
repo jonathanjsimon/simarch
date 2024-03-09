@@ -201,7 +201,9 @@ function install_packages()
         then
             yes | yay ${yay_options[@]} -S polybar
         fi
+        yes | yay ${yay_options[@]} -S coolercontrol
     fi
+
 
     if [ "$XDG_CURRENT_DESKTOP" = "KDE" ];
     then
