@@ -171,6 +171,7 @@ function install_packages()
         yes | yay ${yay_options[@]} -S kvantum
         yes | yay ${yay_options[@]} -S gtk-engine-murrine
         yes | yay ${yay_options[@]} -S papirus-icon-theme
+        yes | yay ${yay_options[@]} -S tela-circle-icon-theme-nord-git
         yes | yay ${yay_options[@]} -S nord-konsole
         yes | yay ${yay_options[@]} -S nordic-wallpapers
         yes | yay ${yay_options[@]} -S nordic-darker-theme
