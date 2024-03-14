@@ -447,7 +447,7 @@ function install_packages()
     yes | yay ${yay_options[@]} -S visual-studio-code-bin
 
     # intellij
-    yes | yay ${yay_options[@]} -S intellij-idea-community-edition
+    yes | yay ${yay_options[@]} -S intellij-idea-community-edition-jre
 
     # scenebuilder
     yes | yay ${yay_options[@]} -S javafx-scenebuilder
