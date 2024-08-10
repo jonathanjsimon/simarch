@@ -103,7 +103,10 @@ function install_packages()
         yes | yay ${yay_options[@]} -S caffeine-ng
         yes | yay ${yay_options[@]} -S zsh
         yes | yay ${yay_options[@]} -S zoxide
-        yes | yay ${yay_options[@]} -S borg python-llfuse
+        yes | yay ${yay_options[@]} -S python-llfuse
+        yes | yay ${yay_options[@]} -S borg
+
+        yes | yay ${yay_options[@]} -S neovim
 
         echo "${boldgreen}Changing shell to zsh${reset}"
         /usr/bin/sudo chsh -s /usr/bin/zsh ${USER}
@@ -277,6 +280,7 @@ function install_packages()
 
     # some import starters, separately for risk management purposes
     yes | yay ${yay_options[@]} -S fzf
+    yes | yay ${yay_options[@]} -S ripgrep
     yes | yay ${yay_options[@]} -S gnupg
     yes | yay ${yay_options[@]} -S opendoas
     yes | yay ${yay_options[@]} -S emacs-nox
@@ -308,13 +312,23 @@ function install_packages()
     yes | yay ${yay_options[@]} -S unzip
     yes | yay ${yay_options[@]} -S mssql-tools
 
+    yes | yay ${yay_options[@]} -S debhelper
+    yes | yay ${yay_options[@]} -S debian-utils
+    yes | yay ${yay_options[@]} -S debootstrap
+    yes | yay ${yay_options[@]} -S devscripts
+
+    yes | yay ${yay_options[@]} -S haruna
+    yes | yay ${yay_options[@]} -S supersonic-desktop-bin
+
+    yes | yay ${yay_options[@]} -S scrcpy
+
     yes | yay ${yay_options[@]} -S linux-headers dkms
 
     if [ $IS_VM -eq 0 ] && [ ${MIN_PKGS} -eq 0 ]
     then
         echo "${boldyellow}Installing virtualbox, must reboot to function${reset}"
 
-        yes | yay ${yay_options[@]} -S virtualbox-ext-oracle virtualbox-bin-guest-iso virtualbox-bin
+        yes | yay ${yay_options[@]} -S virtualbox-ext-oracle virtualbox-bin-guest-iso virtualbox-host-dkms virtualbox
         /usr/bin/sudo gpasswd -a jsimon vboxusers
     fi
 
@@ -374,6 +388,7 @@ function install_packages()
 
         # password manager
         yes | yay ${yay_options[@]} -S 1password
+        yes | yay ${yay_options[@]} -S 1password-cli
 
         # protonvpn
         yes | yay ${yay_options[@]} -S protonvpn
@@ -446,6 +461,9 @@ function install_packages()
     # code
     yes | yay ${yay_options[@]} -S visual-studio-code-bin
 
+    # zed
+    yes | yay ${yay_options[@]} -S zed
+
     # intellij
     yes | yay ${yay_options[@]} -S intellij-idea-community-edition-jre
 
@@ -506,20 +524,24 @@ function install_packages()
     # misc
     yes | yay ${yay_options[@]} -S baobab
     yes | yay ${yay_options[@]} -S kdiskmark
+    yes | yay ${yay_options[@]} -S diskonaut
+    yes | yay ${yay_options[@]} -S diskus
 
     yes | yay ${yay_options[@]} -S npm
 
     # dotnet core
-    yes | yay ${yay_options[@]} -S aspnet-runtime aspnet-runtime-3.1 aspnet-runtime-7.0 \
-                                    aspnet-targeting-pack aspnet-targeting-pack-3.1 aspnet-targeting-pack-6.0 aspnet-targeting-pack-7.0 \
-                                    dotnet-host dotnet-runtime dotnet-runtime-3.1 dotnet-runtime-6.0 dotnet-runtime-7.0 \
-                                    dotnet-sdk dotnet-sdk-3.1 dotnet-sdk-6.0 dotnet-sdk-7.0 \
-                                    dotnet-targeting-pack dotnet-targeting-pack-3.1 dotnet-targeting-pack-6.0 dotnet-targeting-pack-7.0
+    yes | yay ${yay_options[@]} -S aspnet-runtime aspnet-runtime-3.1 aspnet-runtime-6.0 \
+                                    aspnet-targeting-pack aspnet-targeting-pack-3.1 aspnet-targeting-pack-6.0 \
+                                    dotnet-host dotnet-runtime dotnet-runtime-3.1 dotnet-runtime-6.0  \
+                                    dotnet-sdk dotnet-sdk-3.1 dotnet-sdk-6.0 \
+                                    dotnet-targeting-pack dotnet-targeting-pack-3.1 dotnet-targeting-pack-6.0
 
     # java
     yes | yay ${yay_options[@]} -S jdk-openjdk jre17-openjdk jre11-openjdk jre8-openjdk \
                                     openjdk-doc openjdk17-doc openjdk11-doc openjdk8-doc \
                                     openjdk-src openjdk17-src openjdk11-src openjdk8-src
+
+    yes | yay ${yay_options[@]} -S javafx-scenebuilder
 
     yes | yay ${yay_options[@]} -S maven
 
@@ -532,7 +554,10 @@ function install_packages()
     fi
 
     # network tools
-    yes | yay ${yay_options[@]} -S speedtest-cli speedtest++
+    yes | yay ${yay_options[@]} -S speedtest-cli
+    yes | yay ${yay_options[@]} -S speedtest++
+    yes | yay ${yay_options[@]} -S wireshark
+    yes | yay ${yay_options[@]} -S wireshark-qt
 
     # other utilities
     yes | yay ${yay_options[@]} -S jq
@@ -542,9 +567,29 @@ function install_packages()
     yes | yay ${yay_options[@]} -S shiny-mirrors
     yes | yay ${yay_options[@]} -S bmap-tools
     yes | yay ${yay_options[@]} -S screen
+    yes | yay ${yay_options[@]} -S byobu
     yes | yay ${yay_options[@]} -S nmap
     yes | yay ${yay_options[@]} -S vulscan
     yes | yay ${yay_options[@]} -S powershell
+    yes | yay ${yay_options[@]} -S etherwake
+    yes | yay ${yay_options[@]} -S ethtool
+    yes | yay ${yay_options[@]} -S hexdiff
+    yes | yay ${yay_options[@]} -S imgcat
+    yes | yay ${yay_options[@]} -S immich-go
+    yes | yay ${yay_options[@]} -S picard
+    yes | yay ${yay_options[@]} -S rebuild-detector
+
+    yes | yay ${yay_options[@]} -S meson
+    yes | yay ${yay_options[@]} -S ninja
+    yes | yay ${yay_options[@]} -S gcc
+    yes | yay ${yay_options[@]} -S aarch64-linux-gnu-gcc
+    yes | yay ${yay_options[@]} -S gdb
+    yes | yay ${yay_options[@]} -S valgrind
+
+    # hardware things
+    yes | yay ${yay_options[@]} -S i2c-tools
+    yes | yay ${yay_options[@]} -S nvme-cli
+    yes | yay ${yay_options[@]} -S smartmontools
 
     # install some npm stuff
     /usr/bin/sudo npm i -g html-minifier uglify-js uglifycss sass jshint
