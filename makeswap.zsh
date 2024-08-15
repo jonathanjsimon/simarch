@@ -1,6 +1,6 @@
 #!/usr/bin/zsh
 
-${SWAPFILE}="/swapfile"
+SWAPFILE="/swapfile"
 
 if [ -f ${SWAPFILE} ];
 then
