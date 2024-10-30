@@ -103,7 +103,7 @@ LAST_SNAPSHOT=`borg list --short --last 1 "${REPO_PATH}"`
 if [ ${CONFIG} -eq 1 ];
 then
     echo "Restoring configurations from ${REPO_PATH}::${LAST_SNAPSHOT}..."
-    borg --progress extract --strip-components 2 "${REPO_PATH}::${LAST_SNAPSHOT}" home/${USER}/{.ac_domain_smb_credentials,ac_shares.zsh,.dotfiles,.dotfiles.local,.gitconfig,.gitkraken,.gnupg,.histfile,.ssh,.vscode,.config/BraveSoftware/Brave-Browser,.config/Code,.config/deluge,.config/Ferdium,.config/GitKraken,.config/JetBrains,.config/obsidian,.config/polybar,.config/remmina,.config/Slack,.config/superpaper,.config/ulauncher,.config/kde.org/elisa.conf,.config/elisarc,.local/share/plasma/plasmoids,.config/1Password,.local/share/remmina,.local/share/Steam/,.local/share/ulauncher,.local/share/Vorta}
+    borg --progress extract --strip-components 2 "${REPO_PATH}::${LAST_SNAPSHOT}" home/${USER}/{.ac_domain_smb_credentials,ac_shares.zsh,.dotfiles,.dotfiles.local,.gitconfig,.gitkraken,.gnupg,.histfile,.ssh,.config/BraveSoftware/Brave-Browser,.config/deluge,.config/Ferdium,.config/GitKraken,.config/JetBrains,.config/obsidian,.config/polybar,.config/remmina,.config/Slack,.config/superpaper,.config/supersonic,.config/ulauncher,.config/zed,.local/share/plasma/plasmoids,.config/1Password,.local/share/remmina,.local/share/Steam/,.local/share/ulauncher,.local/share/Vorta,.local/share/zed}
     # only restore if laptop
     if [ ${IS_LAPTOP} -eq 1 ];
     then
