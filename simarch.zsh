@@ -209,6 +209,26 @@ function install_packages()
         yes | yay ${yay_options[@]} -S openrgb
     fi
 
+    if [ -n "${WOL_IF}" ] && [ ${WOL} -gt 0 ]
+    then
+        yes | yay ${yay_options[@]} -S wol-systemd
+
+        sudo systemctl enable --now wol@${WOL_IF}.service
+
+        sudo cat > /etc/systemd/system/wol@${WOL_IF}.timer << EOF
+[Unit]
+Description=Force wake on lan enabled every 60 seconds
+
+[Timer]
+OnBootSec=1min
+OnUnitActiveSec=1m
+
+[Install]
+WantedBy=timers.target
+EOF
+        /usr/bin/sudo systemctl enable --now wol@${WOL_IF}.timer
+    fi
+
 
     if [ "$XDG_CURRENT_DESKTOP" = "KDE" ];
     then
@@ -765,6 +785,14 @@ do
         ;;
         --storage=*)
             STORAGEROOT="${arg#--storage=}"
+        ;;
+        --wol)
+            WOL=1
+            WOL_IF=$(route | awk '/^default/{print $NF}')
+        ;;
+        --wol=*)
+            WOL=1
+            WOL_IF="${arg#--wol=}"
         ;;
     esac
 done
