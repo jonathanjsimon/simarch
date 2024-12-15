@@ -169,8 +169,9 @@ function install_packages()
         PLASMAVERSION=$(plasmashell --version | awk '{print $2}' | awk -F '.' '{print $1}')
 
         # fuck baloo, use plocate
-        balooctl disable
-
+        balooctl6 disable
+        balooctl6 clear
+        
         yes | yay ${yay_options[@]} -S kvantum
         yes | yay ${yay_options[@]} -S gtk-engine-murrine
         yes | yay ${yay_options[@]} -S papirus-icon-theme
