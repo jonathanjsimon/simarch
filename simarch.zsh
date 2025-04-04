@@ -202,11 +202,11 @@ function install_packages()
         yes | yay ${yay_options[@]} -S ttf-iosevka-nerd
         yes | yay ${yay_options[@]} -S ttf-font-awesome
         yes | yay ${yay_options[@]} -S otf-font-awesome
-        if [ ${EXTRA_PKGS} -eq 1 ];
-        then
-            yes | yay ${yay_options[@]} -S polybar
-        fi
-        yes | yay ${yay_options[@]} -S coolercontrol
+#         if [ ${EXTRA_PKGS} -eq 1 ];
+#         then
+#             yes | yay ${yay_options[@]} -S polybar
+#         fi
+#         yes | yay ${yay_options[@]} -S coolercontrol
         yes | yay ${yay_options[@]} -S openrgb
     fi
 
