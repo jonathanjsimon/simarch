@@ -42,6 +42,16 @@ function binary_exists()
     return 1
 }
 
+function yay_install()
+{
+    yes | yay "${yay_options[@]}" -S "$@"
+}
+
+function yay_remove()
+{
+    yes | yay "${yay_options[@]}" -Rdd "$@"
+}
+
 function install_packages()
 {
     yay_options=("--useask" "--sudoloop" "--cleanmenu=false" "--diffmenu=false" "--noconfirm")
@@ -91,33 +101,33 @@ function install_packages()
         then
             for f in `sudo mhwd-kernel -li | awk 'NR>2 {print $2}'`
             do
-                yes | yay ${yay_options[@]} -S ${f}-headers
+                yay_install ${f}-headers
             done
         fi
 
-        yes | yay ${yay_options[@]} -S linux-headers dkms
+        yay_install linux-headers dkms
 
-        yes | yay ${yay_options[@]} -S emacs-nox
-        yes | yay ${yay_options[@]} -S bwm-ng
-        yes | yay ${yay_options[@]} -S eza
-        yes | yay ${yay_options[@]} -S caffeine-ng
-        yes | yay ${yay_options[@]} -S zsh
-        yes | yay ${yay_options[@]} -S zoxide
-        yes | yay ${yay_options[@]} -S python-llfuse
-        yes | yay ${yay_options[@]} -S borg
+        yay_install emacs-nox
+        yay_install bwm-ng
+        yay_install eza
+        yay_install caffeine-ng
+        yay_install zsh
+        yay_install zoxide
+        yay_install python-llfuse
+        yay_install borg
 
-        yes | yay ${yay_options[@]} -S neovim
+        yay_install neovim
 
         echo "${boldgreen}Changing shell to zsh${reset}"
         /usr/bin/sudo chsh -s /usr/bin/zsh ${USER}
 
         if [ ${IS_TUXEDO} -eq 1 ];
         then
-            yes | yay ${yay_options[@]} -S tuxedo-drivers-dkms
-            yes | yay ${yay_options[@]} -S tuxedo-control-center-bin
+            yay_install tuxedo-drivers-dkms
+            yay_install tuxedo-control-center-bin
             if [ ${IS_LAPTOP} -eq 1 ];
             then
-                yes | yay ${yay_options[@]} -S tuxedo-touchpad-switch
+                yay_install tuxedo-touchpad-switch
             fi
         fi
 
@@ -127,40 +137,40 @@ function install_packages()
     fi
 
     # get caffeine installed early
-    yes | yay ${yay_options[@]} -S caffeine-ng
+    yay_install caffeine-ng
 
     # octopi
-    yes | yay ${yay_options[@]} -S octopi
-    yes | yay ${yay_options[@]} -S octopi-notifier-frameworks
+    yay_install octopi
+    yay_install octopi-notifier-frameworks
 
     # ranger + atool + supporting utilities
-    yes | yay ${yay_options[@]} -S ranger
-    yes | yay ${yay_options[@]} -S atool
-    yes | yay ${yay_options[@]} -S elinks
-    yes | yay ${yay_options[@]} -S ffmpegthumbnailer
-    yes | yay ${yay_options[@]} -S highlight
-    yes | yay ${yay_options[@]} -S libcaca
-    yes | yay ${yay_options[@]} -S lynx
-    yes | yay ${yay_options[@]} -S mediainfo
-    yes | yay ${yay_options[@]} -S odt2txt
-    yes | yay ${yay_options[@]} -S perl-image-exiftool
-    yes | yay ${yay_options[@]} -S poppler
-    yes | yay ${yay_options[@]} -S python-chardet
-    yes | yay ${yay_options[@]} -S ueberzug
-    yes | yay ${yay_options[@]} -S w3m
-    yes | yay ${yay_options[@]} -S bzip2
-    yes | yay ${yay_options[@]} -S cpio
-    yes | yay ${yay_options[@]} -S gzip
-    yes | yay ${yay_options[@]} -S lha
-    yes | yay ${yay_options[@]} -S xz
-    yes | yay ${yay_options[@]} -S lzop
-    yes | yay ${yay_options[@]} -S p7zip
-    yes | yay ${yay_options[@]} -S tar
-    yes | yay ${yay_options[@]} -S unace
-    yes | yay ${yay_options[@]} -S unrar
-    yes | yay ${yay_options[@]} -S zip
-    yes | yay ${yay_options[@]} -S unzip
-    yes | yay ${yay_options[@]} -S zstd
+    yay_install ranger
+    yay_install atool
+    yay_install elinks
+    yay_install ffmpegthumbnailer
+    yay_install highlight
+    yay_install libcaca
+    yay_install lynx
+    yay_install mediainfo
+    yay_install odt2txt
+    yay_install perl-image-exiftool
+    yay_install poppler
+    yay_install python-chardet
+    yay_install ueberzug
+    yay_install w3m
+    yay_install bzip2
+    yay_install cpio
+    yay_install gzip
+    yay_install lha
+    yay_install xz
+    yay_install lzop
+    yay_install p7zip
+    yay_install tar
+    yay_install unace
+    yay_install unrar
+    yay_install zip
+    yay_install unzip
+    yay_install zstd
 
     # theme stuff
     if [ "$XDG_CURRENT_DESKTOP" = "KDE" ];
@@ -171,15 +181,15 @@ function install_packages()
         # fuck baloo, use plocate
         balooctl6 disable
         balooctl6 clear
-        
-        yes | yay ${yay_options[@]} -S kvantum
-        yes | yay ${yay_options[@]} -S gtk-engine-murrine
-        yes | yay ${yay_options[@]} -S papirus-icon-theme
-        yes | yay ${yay_options[@]} -S tela-circle-icon-theme-nord-git
-        yes | yay ${yay_options[@]} -S nord-konsole
-        yes | yay ${yay_options[@]} -S nordic-wallpapers
-        yes | yay ${yay_options[@]} -S nordic-darker-theme
-        yes | yay ${yay_options[@]} -S kvantum-theme-nordic-git
+
+        yay_install kvantum
+        yay_install gtk-engine-murrine
+        yay_install papirus-icon-theme
+        yay_install tela-circle-icon-theme-nord-git
+        yay_install nord-konsole
+        yay_install nordic-wallpapers
+        yay_install nordic-darker-theme
+        yay_install kvantum-theme-nordic-git
 
         # # set the theme
         # /usr/bin/lookandfeeltool -a com.github.varlesh.materia-dark
@@ -198,21 +208,21 @@ function install_packages()
     if [ ${MIN_PKGS} -eq 0 ]
     then
         # instead of nerd-fonts-complete
-        yes | yay ${yay_options[@]} -S ttf-firacode-nerd
-        yes | yay ${yay_options[@]} -S ttf-iosevka-nerd
-        yes | yay ${yay_options[@]} -S ttf-font-awesome
-        yes | yay ${yay_options[@]} -S otf-font-awesome
+        yay_install ttf-firacode-nerd
+        yay_install ttf-iosevka-nerd
+        yay_install ttf-font-awesome
+        yay_install otf-font-awesome
 #         if [ ${EXTRA_PKGS} -eq 1 ];
 #         then
-#             yes | yay ${yay_options[@]} -S polybar
+#             yay_install polybar
 #         fi
-#         yes | yay ${yay_options[@]} -S coolercontrol
-        yes | yay ${yay_options[@]} -S openrgb
+#         yay_install coolercontrol
+        yay_install openrgb
     fi
 
     if [ -n "${WOL_IF}" ] && [ ${WOL} -gt 0 ]
     then
-        yes | yay ${yay_options[@]} -S wol-systemd
+        yay_install wol-systemd
 
         sudo systemctl enable --now wol@${WOL_IF}.service
 
@@ -233,28 +243,28 @@ EOF
 
     if [ "$XDG_CURRENT_DESKTOP" = "KDE" ];
     then
-        yes | yay ${yay_options[@]} -S plasma${PLASMAVERSION}-applets-thermal-monitor
-        yes | yay ${yay_options[@]} -S lib32-lm_sensors
-        yes | yay ${yay_options[@]} -S lm_sensors
-        yes | yay ${yay_options[@]} -S qt5-sensors
+        yay_install plasma${PLASMAVERSION}-applets-thermal-monitor
+        yay_install lib32-lm_sensors
+        yay_install lm_sensors
+        yay_install qt5-sensors
 
         if [ ${PLASMAVERSION} -eq 6 ];
         then
-            yes | yay ${yay_options[@]} -S qt6-sensors
+            yay_install qt6-sensors
         fi
 
         # replace kate with kwrite
-        yes | yay ${yay_options[@]} -Rdd kate
-        yes | yay ${yay_options[@]} -S kwrite
+        yay_remove kate
+        yay_install kwrite
 
         # kgpg
-        yes | yay ${yay_options[@]} -S kgpg
-        yes | yay ${yay_options[@]} -S kwalletmanager
+        yay_install kgpg
+        yay_install kwalletmanager
 
         if [ ${IS_ENDEAVOUR} -gt 0 ];
         then
             # kde addons
-            yes | yay ${yay_options[@]} -S kdeplasma-addons
+            yay_install kdeplasma-addons
         fi
     fi
 
@@ -262,13 +272,13 @@ EOF
     then
         # remove pulse, kate, etc
         echo "${boldyellow}Replacing pulseaudio with pipewire${reset}"
-        yes | yay ${yay_options[@]} -Rdd pulseaudio
-        yes | yay ${yay_options[@]} -Rdd pulseaudio-alsa
-        yes | yay ${yay_options[@]} -Rdd pulseaudio-bluetooth
-        yes | yay ${yay_options[@]} -Rdd pulseaudio-ctl
-        yes | yay ${yay_options[@]} -Rdd pulseaudio-zeroconf
-        yes | yay ${yay_options[@]} -Rdd manjaro-pulse
-        yes | yay ${yay_options[@]} -Rdd jack2
+        yay_remove pulseaudio
+        yay_remove pulseaudio-alsa
+        yay_remove pulseaudio-bluetooth
+        yay_remove pulseaudio-ctl
+        yay_remove pulseaudio-zeroconf
+        yay_remove manjaro-pulse
+        yay_remove jack2
 
          # install pipewire
         yes | yay ${yay_options[@]} -So manjaro-pipewire wireplumber phonon-qt5-gstreamer gst-plugin-pipewire pipewire-jack easyeffects pipewire-x11-bell realtime-privileges
@@ -276,13 +286,13 @@ EOF
         # only install kde stuffs if on kde
         if [ "$XDG_CURRENT_DESKTOP" = "KDE" ];
         then
-            yes | yay ${yay_options[@]} -S plasma-pa
+            yay_install plasma-pa
         fi
     fi
 
     if [ "$XDG_CURRENT_DESKTOP" = "KDE" ];
     then
-	yes | yay ${yay_options[@]} -S xdg-desktop-portal xdg-desktop-portal-kde
+	yay_install xdg-desktop-portal xdg-desktop-portal-kde
 	# xdg-desktop-portal-gtk
     fi
 
@@ -291,21 +301,21 @@ EOF
     then
         echo "${boldyellow}Installing btrfs packages${reset}"
 
-        yes | yay ${yay_options[@]} -S btrfs-assistant
-        yes | yay ${yay_options[@]} -S btrfs-heatmap
-        yes | yay ${yay_options[@]} -S python-btrfs
-        yes | yay ${yay_options[@]} -S snapper
-        yes | yay ${yay_options[@]} -S bees
-        yes | yay ${yay_options[@]} -S btrfsmaintenance
+        yay_install btrfs-assistant
+        yay_install btrfs-heatmap
+        yay_install python-btrfs
+        yay_install snapper
+        yay_install bees
+        yay_install btrfsmaintenance
     fi
 
     # some import starters, separately for risk management purposes
-    yes | yay ${yay_options[@]} -S fzf
-    yes | yay ${yay_options[@]} -S ripgrep
-    yes | yay ${yay_options[@]} -S gnupg
-    yes | yay ${yay_options[@]} -S opendoas
-    yes | yay ${yay_options[@]} -S emacs-nox
-    yes | yay ${yay_options[@]} -S gnome-keyring
+    yay_install fzf
+    yay_install ripgrep
+    yay_install gnupg
+    yay_install opendoas
+    yay_install emacs-nox
+    yay_install gnome-keyring
 
     brave_pkg_name="brave-browser"
     if [ ${IS_ENDEAVOUR} -gt 0 ];
@@ -313,63 +323,63 @@ EOF
         brave_pkg_name="brave-bin"
     fi
 
-    yes | yay ${yay_options[@]} -S ${brave_pkg_name} && \
+    yay_install ${brave_pkg_name} && \
         xdg-settings set default-web-browser brave.desktop && \
         xdg-mime default brave-browser.desktop x-scheme-handler/https && \
         xdg-mime default brave-browser.desktop x-scheme-handler/http
 
-    yes | yay ${yay_options[@]} -S betterbird-bin
-    yes | yay ${yay_options[@]} -S git
-    yes | yay ${yay_options[@]} -S git-lfs
-    yes | yay ${yay_options[@]} -S gitflow-avh
-    yes | yay ${yay_options[@]} -S figlet
-    yes | yay ${yay_options[@]} -S bc
-    yes | yay ${yay_options[@]} -S zsh
-    yes | yay ${yay_options[@]} -S htop
-    yes | yay ${yay_options[@]} -S btop-git
-    yes | yay ${yay_options[@]} -S bwm-ng
-    yes | yay ${yay_options[@]} -S aria2
-    yes | yay ${yay_options[@]} -S eza
-    yes | yay ${yay_options[@]} -S unzip
-    yes | yay ${yay_options[@]} -S mssql-tools
+    yay_install betterbird-bin
+    yay_install git
+    yay_install git-lfs
+    yay_install gitflow-avh
+    yay_install figlet
+    yay_install bc
+    yay_install zsh
+    yay_install htop
+    yay_install btop-git
+    yay_install bwm-ng
+    yay_install aria2
+    yay_install eza
+    yay_install unzip
+    yay_install mssql-tools
 
-    yes | yay ${yay_options[@]} -S debhelper
-    yes | yay ${yay_options[@]} -S debian-utils
-    yes | yay ${yay_options[@]} -S debootstrap
-    yes | yay ${yay_options[@]} -S devscripts
+    yay_install debhelper
+    yay_install debian-utils
+    yay_install debootstrap
+    yay_install devscripts
 
-    yes | yay ${yay_options[@]} -S haruna
-    yes | yay ${yay_options[@]} -S supersonic-desktop-bin
+    yay_install haruna
+    yay_install supersonic-desktop-bin
 
-    yes | yay ${yay_options[@]} -S scrcpy
+    yay_install scrcpy
 
-    yes | yay ${yay_options[@]} -S linux-headers dkms
+    yay_install linux-headers dkms
 
     if [ $IS_VM -eq 0 ] && [ ${MIN_PKGS} -eq 0 ]
     then
         echo "${boldyellow}Installing virtualbox, must reboot to function${reset}"
 
-        yes | yay ${yay_options[@]} -S virtualbox-ext-oracle virtualbox-bin-guest-iso virtualbox-host-dkms virtualbox
+        yay_install virtualbox-ext-oracle virtualbox-bin-guest-iso virtualbox-host-dkms virtualbox
         /usr/bin/sudo gpasswd -a jsimon vboxusers
     fi
 
     # gnome-keyring
-    yes | yay ${yay_options[@]} -S libgnome-keyring
+    yay_install libgnome-keyring
 
     if [ ${MIN_PKGS} -eq 0 ];
     then
         # dock and ulauncher stuff
-        yes | yay ${yay_options[@]} -S python-pytz # soft ulauncher dependency (ulauncher extension requires it)
+        yay_install python-pytz # soft ulauncher dependency (ulauncher extension requires it)
 
-        yes | yay ${yay_options[@]} -S ulauncher
-        yes | yay ${yay_options[@]} -S plasma5-applets-virtual-desktop-bar-git
+        yay_install ulauncher
+        yay_install plasma5-applets-virtual-desktop-bar-git
         systemctl --user enable ulauncher.service
     fi
 
     if [ ${EXTRA_PKGS} -eq 1 ];
     then
         # docker
-        yes | yay ${yay_options[@]} -S docker docker-buildx docker-rootless-extras
+        yay_install docker docker-buildx docker-rootless-extras
         echo | /usr/bin/sudo tee -a /etc/subuid
         echo "$USER:231072:65536" | /usr/bin/sudo tee -a /etc/subuid
 
@@ -383,146 +393,146 @@ EOF
     if [ $IS_VM -ne 1 ] && [ ${MIN_PKGS} -eq 0 ];
     then
         # cloud stuff
-        yes | yay ${yay_options[@]} -S python-gpgme # unlisted Dropbox dependency
-        yes | yay ${yay_options[@]} -S dropbox
+        yay_install python-gpgme # unlisted Dropbox dependency
+        yay_install dropbox
         if [ "$XDG_CURRENT_DESKTOP" = "KDE" ];
         then
-            yes | yay ${yay_options[@]} -S dolphin-plugins
+            yay_install dolphin-plugins
         fi
-        yes | yay ${yay_options[@]} -S nextcloud-client
+        yay_install nextcloud-client
 
         # spotify AUR installer fails sometimes
-        yes | yay ${yay_options[@]} -S spotify
+        yay_install spotify
 
         # chat
-        yes | yay ${yay_options[@]} -S slack-desktop
-        yes | yay ${yay_options[@]} -S ferdium-bin
-        yes | yay ${yay_options[@]} -S mattermost-desktop
+        yay_install slack-desktop
+        yay_install ferdium-bin
+        yay_install mattermost-desktop
         # soft mattermost dependency
-        yes | yay ${yay_options[@]} -S trash-cli
-        yes | yay ${yay_options[@]} -S pnpm
-        yes | yay ${yay_options[@]} -S zoom
+        yay_install trash-cli
+        yay_install pnpm
+        yay_install zoom
 
         # borg + vorta
-        yes | yay ${yay_options[@]} -S borg
-        yes | yay ${yay_options[@]} -S vorta
+        yay_install borg
+        yay_install vorta
 
         # password manager
-        yes | yay ${yay_options[@]} -S 1password
-        yes | yay ${yay_options[@]} -S 1password-cli
+        yay_install 1password
+        yay_install 1password-cli
 
         # protonvpn
-        yes | yay ${yay_options[@]} -S protonvpn
+        yay_install protonvpn
 
         # tailscale + ktailctl
-        yes | yay ${yay_options[@]} -S tailscale
+        yay_install tailscale
         /usr/bin/sudo systemctl enable --now tailscaled
 
-        yes | yay ${yay_options[@]} -S ktailctl
+        yay_install ktailctl
 
         # solaar
-        yes | yay ${yay_options[@]} -S solaar
+        yay_install solaar
 
         # openrazer-meta
-        yes | yay ${yay_options[@]} -S openrazer-meta
+        yay_install openrazer-meta
 
         # polychromatic
-        yes | yay ${yay_options[@]} -S polychromatic
+        yay_install polychromatic
 
         /usr/bin/sudo gpasswd -a jsimon plugdev
 
         # battop
-        yes | yay ${yay_options[@]} -S battop
+        yay_install battop
 
         # nvtop
-        yes | yay ${yay_options[@]} -S nvtop
+        yay_install nvtop
 
         # powerpanel
-        yes | yay ${yay_options[@]} -S powerpanel
+        yay_install powerpanel
         /usr/bin/sudo systemctl enable --now pwrstatd.service
 
         # remote desktop
-        yes | yay ${yay_options[@]} -S remmina
-        yes | yay ${yay_options[@]} -S freerdp
+        yay_install remmina
+        yay_install freerdp
     fi
 
     # bmap-tools
-    yes | yay ${yay_options[@]} -S bmap-tools
+    yay_install bmap-tools
 
     # ventoy
-    yes | yay ${yay_options[@]} -S ventoy
+    yay_install ventoy
 
     # pigz
-    yes | yay ${yay_options[@]} -S pigz
+    yay_install pigz
 
     # hdparm
-    yes | yay ${yay_options[@]} -S hdparm
+    yay_install hdparm
 
     if [ ${IS_LAPTOP} -eq 1 ];
     then
         # touchegg
-        yes | yay ${yay_options[@]} -S touchegg
-        yes | yay ${yay_options[@]} -S touche
+        yay_install touchegg
+        yay_install touche
         /usr/bin/sudo systemctl enable touchegg
     fi
 
     # archive tool
-    yes | yay ${yay_options[@]} -S atool
+    yay_install atool
 
     # srm
-    yes | yay ${yay_options[@]} -S srm
+    yay_install srm
 
     # subversion + git
-    yes | yay ${yay_options[@]} -S subversion
-    yes | yay ${yay_options[@]} -S git
+    yay_install subversion
+    yay_install git
 
     # thefuck
-    yes | yay ${yay_options[@]} -S thefuck
+    yay_install thefuck
 
     # code
-    yes | yay ${yay_options[@]} -S visual-studio-code-bin
+    yay_install visual-studio-code-bin
 
     # zed
-    yes | yay ${yay_options[@]} -S zed
+    yay_install zed
 
     # intellij
-    yes | yay ${yay_options[@]} -S intellij-idea-community-edition-jre
+    yay_install intellij-idea-community-edition
 
     # scenebuilder
-    yes | yay ${yay_options[@]} -S javafx-scenebuilder
+    yay_install javafx-scenebuilder
 
     if [ ${MIN_PKGS} -eq 0 ];
     then
         # gitkraken
-        yes | yay ${yay_options[@]} -S gitkraken
+        yay_install gitkraken
 
         # meld
-        yes | yay ${yay_options[@]} -S meld
+        yay_install meld
 
         # postman
-        yes | yay ${yay_options[@]} -S postman-bin
+        yay_install postman-bin
     fi
 
     if [ ${MIN_PKGS} -eq 0 ];
     then
         # misc
-        yes | yay ${yay_options[@]} -S obsidian
+        yay_install obsidian
         # todoist appimage sucks
-        # yes | yay ${yay_options[@]} -S planify
-        yes | yay ${yay_options[@]} -S freecad
-        yes | yay ${yay_options[@]} -S yt-dlp
-        yes | yay ${yay_options[@]} -S yt-dlp-drop-in
-        yes | yay ${yay_options[@]} -S smile
-        yes | yay ${yay_options[@]} -S inkscape
-        yes | yay ${yay_options[@]} -S cheese
+        # yay_install planify
+        yay_install freecad
+        yay_install yt-dlp
+        yay_install yt-dlp-drop-in
+        yay_install smile
+        yay_install inkscape
+        yay_install cheese
     fi
 
     if [ ${EXTRA_PKGS} -eq 1 ];
     then
-        yes | yay ${yay_options[@]} -S ginkgocadx-bin
-        yes | yay ${yay_options[@]} -S deluge-gtk
-        yes | yay ${yay_options[@]} -S chirp-next
-        yes | yay ${yay_options[@]} -S hamradio-menus
+        yay_install ginkgocadx-bin
+        yay_install deluge-gtk
+        yay_install chirp-next
+        yay_install hamradio-menus
         /usr/bin/sudo usermod -a -G uucp jsimon
     fi
 
@@ -531,110 +541,110 @@ EOF
         if [ ${IS_ENDEAVOUR} -gt 0 ];
         then
             # soft dependency of discover
-            yes | yay ${yay_options[@]} -S packagekit-qt5
+            yay_install packagekit-qt5
 
             if [ ${PLASMAVERSION} -eq 6 ];
             then
-                yes | yay ${yay_options[@]} -S qt6-sensors
+                yay_install qt6-sensors
             fi
         fi
 
-        yes | yay ${yay_options[@]} -S discover
+        yay_install discover
     fi
 
     # misc
-    yes | yay ${yay_options[@]} -S baobab
-    yes | yay ${yay_options[@]} -S kdiskmark
-    yes | yay ${yay_options[@]} -S diskonaut
-    yes | yay ${yay_options[@]} -S diskus
+    yay_install baobab
+    yay_install kdiskmark
+    yay_install diskonaut
+    yay_install diskus
 
-    yes | yay ${yay_options[@]} -S npm
+    yay_install npm
 
     # dotnet core
-    yes | yay ${yay_options[@]} -S aspnet-runtime aspnet-runtime-3.1 aspnet-runtime-6.0 \
+    yay_install aspnet-runtime aspnet-runtime-3.1 aspnet-runtime-6.0 \
                                     aspnet-targeting-pack aspnet-targeting-pack-3.1 aspnet-targeting-pack-6.0 \
                                     dotnet-host dotnet-runtime dotnet-runtime-3.1 dotnet-runtime-6.0  \
                                     dotnet-sdk dotnet-sdk-3.1 dotnet-sdk-6.0 \
                                     dotnet-targeting-pack dotnet-targeting-pack-3.1 dotnet-targeting-pack-6.0
 
     # java
-    yes | yay ${yay_options[@]} -S jdk-openjdk jre17-openjdk jre11-openjdk jre8-openjdk \
+    yay_install jdk-openjdk jre17-openjdk jre11-openjdk jre8-openjdk \
                                     openjdk-doc openjdk17-doc openjdk11-doc openjdk8-doc \
                                     openjdk-src openjdk17-src openjdk11-src openjdk8-src
 
-    yes | yay ${yay_options[@]} -S javafx-scenebuilder
+    yay_install javafx-scenebuilder
 
-    yes | yay ${yay_options[@]} -S maven
+    yay_install maven
 
-    yes | yay ${yay_options[@]} -S visualvm
+    yay_install visualvm
 
 
     if [ ${MIN_PKGS} -eq 0 ];
     then
-        yes | yay ${yay_options[@]} -S superpaper
+        yay_install superpaper
     fi
 
     # network tools
-    yes | yay ${yay_options[@]} -S speedtest-cli
-    yes | yay ${yay_options[@]} -S speedtest++
-    yes | yay ${yay_options[@]} -S wireshark
-    yes | yay ${yay_options[@]} -S wireshark-qt
+    yay_install speedtest-cli
+    yay_install speedtest++
+    yay_install wireshark
+    yay_install wireshark-qt
 
     # other utilities
-    yes | yay ${yay_options[@]} -S jq
-    yes | yay ${yay_options[@]} -S highlight
-    yes | yay ${yay_options[@]} -S bat
-    yes | yay ${yay_options[@]} -S ncdu
-    yes | yay ${yay_options[@]} -S shiny-mirrors
-    yes | yay ${yay_options[@]} -S bmap-tools
-    yes | yay ${yay_options[@]} -S screen
-    yes | yay ${yay_options[@]} -S byobu
-    yes | yay ${yay_options[@]} -S nmap
-    yes | yay ${yay_options[@]} -S vulscan
-    yes | yay ${yay_options[@]} -S powershell
-    yes | yay ${yay_options[@]} -S etherwake
-    yes | yay ${yay_options[@]} -S ethtool
-    yes | yay ${yay_options[@]} -S hexdiff
-    yes | yay ${yay_options[@]} -S imgcat
-    yes | yay ${yay_options[@]} -S immich-go
-    yes | yay ${yay_options[@]} -S picard
-    yes | yay ${yay_options[@]} -S rebuild-detector
+    yay_install jq
+    yay_install highlight
+    yay_install bat
+    yay_install ncdu
+    yay_install shiny-mirrors
+    yay_install bmap-tools
+    yay_install screen
+    yay_install byobu
+    yay_install nmap
+    yay_install vulscan
+    yay_install powershell
+    yay_install etherwake
+    yay_install ethtool
+    yay_install hexdiff
+    yay_install imgcat
+    yay_install immich-go
+    yay_install picard
+    yay_install rebuild-detector
 
-    yes | yay ${yay_options[@]} -S meson
-    yes | yay ${yay_options[@]} -S ninja
-    yes | yay ${yay_options[@]} -S gcc
-    yes | yay ${yay_options[@]} -S aarch64-linux-gnu-gcc
-    yes | yay ${yay_options[@]} -S gdb
-    yes | yay ${yay_options[@]} -S valgrind
+    yay_install meson
+    yay_install ninja
+    yay_install gcc
+    yay_install aarch64-linux-gnu-gcc
+    yay_install gdb
+    yay_install valgrind
 
     # hardware things
-    yes | yay ${yay_options[@]} -S i2c-tools
-    yes | yay ${yay_options[@]} -S nvme-cli
-    yes | yay ${yay_options[@]} -S smartmontools
+    yay_install i2c-tools
+    yay_install nvme-cli
+    yay_install smartmontools
 
     # install some npm stuff
     /usr/bin/sudo npm i -g html-minifier uglify-js uglifycss sass jshint
 
     if [ ${MIN_PKGS} -eq 0 ];
     then
-        yes | yay ${yay_options[@]} -S automake autoconf
-        yes | yay ${yay_options[@]} -S mono
-        yes | yay ${yay_options[@]} -S mono-msbuild
+        yay_install automake autoconf
+        yay_install mono
+        yay_install mono-msbuild
     fi
 
     if [ ${WINE} -eq 1 ];
     then
-        yes | yay ${yay_options[@]} -S wine
-        yes | yay ${yay_options[@]} -S lib32-gnutls
+        yay_install wine
+        yay_install lib32-gnutls
     fi
 
     # avahi
-    yes | yay ${yay_options[@]} -S avahi
+    yay_install avahi
     /usr/bin/sudo systemctl enable --now avahi-daemon
 
     # plocate
     yes | yay ${yay_options[@]} -R mlocate
-    yes | yay ${yay_options[@]} -S plocate
+    yay_install plocate
     /usr/bin/sudo updatedb
     /usr/bin/sudo systemctl enable --now plocate-updatedb.timer
 
@@ -645,7 +655,7 @@ EOF
         echo "${boldyellow}Must run \"sudo tailscale up --operator=${USER}\"${reset}"
     fi
 
-    yes | yay ${yay_options[@]} -S pacman-log-orphans-hook
+    yay_install pacman-log-orphans-hook
 }
 
 function main()
@@ -678,7 +688,7 @@ EOF
 CheckFlatpakUpdates
 EOF
     fi
-    /usr/bin/sudo perl -p -i -e 's/^.MAKEFLAGS=.*/MAKEFLAGS="-j8"/g' /etc/makepkg.conf
+    /usr/bin/sudo perl -p -i -e 's/^.MAKEFLAGS=.*/MAKEFLAGS="-j'$(($(nproc)/2))'"/g' /etc/makepkg.conf
 
     cat << 'EOF' | /usr/bin/sudo tee /etc/udev/rules.d/81-wifi-powersave.rules
 # never power save wifi, the chip will disconnect from the network randomly on 5GHz
