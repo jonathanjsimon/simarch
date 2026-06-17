@@ -245,8 +245,8 @@ pkgs_peripherals=(
 )
 
 pkgs_virtualbox=(
-    virtualbox virtualbox-host-dkms virtualbox-guest-iso
-    virtualbox-ext-oracle
+    virtualbox virtualbox-host-modules-arch virtualbox-host-modules-lt
+    virtualbox-guest-iso  virtualbox-ext-oracle
 )
 
 # ── Full/extra profile ─────────────────────────────────────────────────────────
